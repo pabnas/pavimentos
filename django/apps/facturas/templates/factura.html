@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+
+    {% include '_head.html' %}
+    <head>
+        <meta charset="UTF-8">
+    <title>Factura</title>
+    </head>
+<body>
+    <div id="wrapper">
+        {% include '_sidebar.html' %}
+        <div id="content-wrapper" class="d-flex flex-column">
+          <div id="content">
+            {% include '_topbar.html' %}
+            <div>
+                <form id="form_consultar" onsubmit="return false;">
+            {% csrf_token %}
+            <label>
+                Cliente:
+            </label>
+
+            <input list="clientes_list" id="Cliente" name="Cliente" required="">
+            <datalist id="clientes_list">
+                <option value="" disabled selected hidden>Seleccione un Cliente</option>
+                {% for cliente in clientes%}
+                <option value="{{cliente.document_type}} {{ cliente.document_number }}">{{cliente.document_type}} {{cliente.nombre}} {{cliente.apellido}}</option>
+                {% endfor %}
+            </datalist>
+
+            <button id="btn_consultar" type="submit" class="btn btn-success" onclick="Consultar()">
+                    <i class="fas fa-search" ></i> Consultar
+            </button>
+        </form>
+            </div>
+            <div id="tabla_factura"></div>
+          </div>
+        </div>
+    </div>
+    {% include '_footer.html' %}
+</body>
+</html>
+
+<script>
+    function Consultar(){
+        if($('#form_consultar')[0].checkValidity()){
+            $.ajax({
+               type: "GET",
+               url: "factura/consultar_factura",
+               data: {
+                    "Cliente":$('#Cliente')[0].value,
+               },
+               success: function(data) {
+                    $("#tabla_factura").html(data);
+               },
+               failure: function(data){
+                    alert("Error, revise log");
+                    console.log(data);
+               }
+            });
+        }
+    }
+</script>

@@ -1,0 +1,425 @@
+<body>
+
+    <form id="form_finalizar" enctype="multipart/form-data" onsubmit="return false;">
+        {% csrf_token %}
+        <div class="card"  style="margin: 1% 2% 0% 2%; ">
+            <div class="card-body" id="datos_compra">
+                <div class="grid-container">
+                    <div class="item1" id="tipo_doc">Tipo documento: {{ Compra.proveedor.document_type }} </div>
+                    <div class="item1" id="fecha">Fecha: {{ Compra.created_at }}</div>
+                    <div class="item11" id="Id_compra">Factura: {{ Compra.id }}</div>
+                </div>
+                <div class="grid-container1">
+                    <div class="item2" id="nombre_cliente" >Nombre: {{ Compra.proveedor.nombre }}</div>
+                    <div class="item3" id="apellido_cliente" >Apellido: {{ Compra.proveedor.apellido }}</div>
+
+                    <div class="item4" id="doc">Documento: {{ Compra.proveedor.document_id }}</div>
+                    <div class="item5" id="telefono_cliente">Telefono: {{ Compra.proveedor.telefono }}</div>
+
+                    <div class="item6" id="correo_cliente"> Correo: {{ Compra.proveedor.email }}</div>
+                </div>
+
+                <div class="grid-container2">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered" id="centrada">
+                            <thead class="thead"style="background:#5CF78A;">
+                                <tr style="color: #ffffff;">
+                                    <th scope="col">Codigo de Producto</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Valor unidad</th>
+                                    <th scope="col">Cantidad</th>
+                                    <th scope="col">Descuento</th>
+                                    <th scope="col">Valor</th>
+                                    <th scope="col">Comentario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for articulo in Articulos %}
+                                <tr >
+                                    <td>{{articulo.Codigo}}</td>
+                                    <td>{{articulo.Nombre}}</td>
+                                    <td>{{articulo.Valor_Unidad|stringformat:".2f" }}</td>
+                                    <td>{{articulo.Unidades}}</td>
+                                    <td>{{articulo.Descuento|stringformat:".2f" }}</td>
+                                    <td>{{articulo.Valor|stringformat:".2f" }}</td>
+                                    <td style="max-width:300px;" >{{articulo.Comentario}}</td>
+                                </tr>
+                            {% endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="grid-container3">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th scope="col" style="background:#00FF89; color: #ffffff;">Subtotal</th>
+                                <th id="subtotal_val" scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr >
+                                    <td style="background:#00FF89; color: #ffffff;">% Descuento</td>
+                                    <td>
+                                        <input id="descuento_val" type="number" max="100" min="0" value="0"
+                                               placeholder="Ingrese el descuento que desee aplicar" onkeyup="eval_total_final()"
+                                               onchange="eval_total_final()" required name="Descuento">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background:#00FF89; color: #ffffff;">% IVA</td>
+                                    <td i>
+                                        <input id="iva_val" type="number" max="100" min="0" value="19"
+                                               placeholder="Ingrese el descuento que desee aplicar" onkeyup="eval_total_final()"
+                                               onchange="eval_total_final()" required name="IVA">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background:#00FF89; color: #ffffff;">Total</td>
+                                    <td id="total_val"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card-footer " style="text-align: right;">
+                <div>
+                    <label>
+                        Si desea agregar una captura de una imagen, por favor adjuntela
+                    </label>
+                    <input type="file" name="Factura" id="Factura">
+                </div>
+
+                <button class="btn btn-success" data-toggle="modal" data-target="#nuevo_articulo">
+                    <i class="fas fa-clipboard-list"></i> Agregar Producto
+                </button>
+                <button id="btn_finalizar" type="submit" class="btn btn-success"  data-dismiss="modal" onclick="finalizar_Compra()">
+                    <i class="fas fa-shopping-bag" ></i> Finalizar Compra
+                </button>
+                <button type="button" class="btn btn-danger"  data-dismiss="modal" onclick="cancelar_Compra({{ Compra.id }})" >
+                    <i class="fas fa-ban"></i> Cancelar Compra
+                </button>
+            </div>
+        </div>
+    </form>
+
+
+    
+    <!-- Modal -->
+    <div class="modal fade" id="nuevo_articulo" tabindex="-1" role="dialog" aria-hidden="true" >
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Por favor complete los siguientes campos</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="form_producto" onsubmit="return false;">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Codigo del articulo</span>
+                            </div>
+                            <input list="productos_list" id="Codigo" name="Codigo" onchange="cargar_datos_articulo(this)" required="">
+                            <datalist id="productos_list">
+                                <option value="" disabled selected hidden>Seleccione un articulo</option>
+                                {% for producto in productos%}
+                                <option value="{{ producto.codigo }}">{{ producto.codigo}} {{ producto.nombre}}</option>
+                                {% endfor %}
+                            </datalist>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Cantidad</span>
+                            </div>
+                            <input type="number" class="form-control" value="1" placeholder="Ingrese La cantidad" aria-describedby="basic-addon1" id="Cantidad" name="Cantidad" required="" onchange="calcular_total()" onkeyup="calcular_total()"/>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Valor unitario</span>
+                            </div>
+                            <input type="number" value="0" class="form-control" aria-describedby="basic-addon1" id="Valor_unitario" name="Valor_unitario" disabled/>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Descuento %</span>
+                            </div>
+                            <input type="number" value="0" class="form-control" placeholder="Ingrese el descuento que desee aplicar" aria-describedby="basic-addon1" id="Descuento" name="Descuento" onchange="calcular_total()" onkeyup="calcular_total()" required/>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Subtotal</span>
+                            </div>
+                            <input type="number" value="0" class="form-control" aria-describedby="basic-addon1" id="Subtotal" name="Subtotal" disabled/>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Total</span>
+                            </div>
+                            <input type="number" value="0" class="form-control" aria-describedby="basic-addon1" id="Total" name="Total" disabled/>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Comentario:</label>
+                            <textarea class="form-control" rows="3"  type="text" id="comentario" name="Comentario"></textarea>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button disabled id="btn_add_new" data-dismiss="modal" type="submit" class="btn btn-success" onclick="agregar({{ Compra.id }})">Guardar</button>
+                            <button type="button" class="btn btn-danger"  data-dismiss="modal" > Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<style>
+        .grid-container {
+          display: grid;
+          grid-template-columns: auto auto auto;
+          grid-column-gap: 5%;         
+        } 
+        .grid-container1 {
+          display: grid;
+          grid-template-columns: auto auto;
+          grid-column-gap: 8%;         
+        } 
+
+        .grid-container2 {
+          display: grid;
+          grid-template-columns: auto;
+          padding: 3% 1%;        
+        } 
+        .grid-container3 {
+          display: grid;
+          grid-template-columns: auto auto auto auto auto;
+          padding: 3% 1%;        
+        } 
+
+        .item1 {
+          padding: 3% 2%;   /*arriba der*/
+          font-size: 30px;
+        }
+
+        .item11 {
+          padding: 6% 2%;   /*arriba der*/
+          font-size: 30px;
+        }
+
+        .item2 {
+           padding: 0% 2%;
+           font-size: 20px;
+        }
+        .item3{
+            padding: 0% 2%;
+            font-size: 20px;
+        }
+
+        .item4{
+           padding: 0% 2%;
+           font-size: 20px;
+        }
+
+        .item5 {
+            padding: 0% 2%;
+            font-size: 20px;
+        }
+
+        .item6{
+           padding:0% 2%;
+           font-size: 20px;
+        }
+
+        #centrada {
+        text-align: center;
+        }
+</style> 
+
+</body>
+<style>
+    .html2canvas-container { width: 3000px !important; height: 3000px !important; }
+</style>
+<script>
+
+    $('document').ready(function(){
+        var subtotal = 0;
+        $('#centrada tr td:nth-child(6)').each(function () {
+            subtotal += eval(parseFloat($(this).html()).toFixed(2));
+            console.log(subtotal);
+        });
+        $('#subtotal_val')[0].innerHTML =parseFloat(subtotal).toFixed(2);
+        eval_total_final();
+    });
+
+    function eval_total_final(){
+        var subtotal = parseFloat($('#subtotal_val')[0].innerHTML).toFixed(2);
+        var descuento = parseFloat(($('#descuento_val')[0].value/100) * subtotal ).toFixed(2);
+        var iva = parseFloat(($('#iva_val')[0].value/100)+1).toFixed(2);
+        var total = subtotal - descuento;
+        total = total * iva;
+        $('#total_val')[0].innerHTML = parseFloat(total).toFixed(2);
+    }
+
+    var img;
+    function finalizar_Compra(){
+        var doc = new jsPDF();
+        var specialElementHandlers = {
+            '#editor': function (element, renderer) {
+                return true;
+            }
+        };
+        html2canvas($("#datos_compra"),{
+            background: '#fff',
+            onrendered: function(canvas){
+                 //document.body.appendChild(canvas);
+                 // Get base64URL
+                 var base64URL = canvas.toDataURL('image/jpeg').replace('image/jpeg', 'image/jpeg');
+                 img = base64URL;
+                 console.log("imagen");
+                 enviar_formulario_finalizar();
+                 //var doc = new jsPDF();
+                 //doc.addImage(img,'JPEG',20,20);
+                 //doc.save('Factura_{{ Compra.id }}.pdf');
+            }
+        });
+    }
+
+
+    function enviar_formulario_finalizar(){
+        if($('#form_finalizar')[0].checkValidity()){
+            var form = $('#form_finalizar')[0];
+            var fd = new FormData(form);
+            fd.append('Subtotal',$('#subtotal_val')[0].innerHTML);
+            fd.append('ID_compra',{{ Compra.id  }});
+            fd.append('Total',$('#total_val')[0].innerHTML);
+            console.log("datos");
+            fd.append('Image',img);
+            $.ajax({
+               type: "POST",
+               url: "compras/finalizar",
+               data: fd,
+               processData: false,
+               contentType: false,
+               success: function(data) {
+                    alert(data.result);
+                    if(data.success == "true"){
+                        document.getElementById("form_finalizar").reset();
+                        $('#form_finalizar')[0].setAttribute("hidden","true");
+                        window.location.reload(true);
+                    }
+               },
+               failure: function(data){
+                    console.log(data);
+               }
+            });
+        }
+    }
+
+    function cargar_datos_articulo(e){
+        var id = e.value;
+
+        $.ajax({
+           type: "GET",
+           url: "compras/cargar_detalles",
+           data: {
+                "id_producto": id,
+           },
+           success: function(data) {
+                $('#btn_add_new')[0].setAttribute("disabled", "");
+                console.log(data.result);
+                if(data.success == "true"){
+                    $('#Valor_unitario')[0].value = data.valor;
+                    calcular_total();
+                }
+           },
+           failure: function(data){
+                alert("Error, revise log");
+                console.log(data);
+           }
+        });
+    }
+
+    function calcular_total(){
+        //calular subtotal
+        var valor_sin_desc = parseInt($('#Cantidad')[0].value) * parseFloat($('#Valor_unitario')[0].value);
+        var por_desc = parseFloat($('#Descuento')[0].value)/100;
+        por_desc = por_desc * valor_sin_desc;
+        $('#Subtotal')[0].value = valor_sin_desc - por_desc;
+        //calcular total con iva
+        var total = parseFloat($('#Subtotal')[0].value);
+        $('#Total')[0].value = total;
+        debugger;
+        if(isNaN(valor_sin_desc) || isNaN(por_desc) || isNaN(total) ){
+            $('#btn_add_new')[0].setAttribute("disabled", "");
+        }
+        else{
+           $('#btn_add_new')[0].removeAttribute("disabled");
+        }
+    }
+
+    function agregar(id_compra){
+        if($('#form_producto')[0].checkValidity()){
+            var form = $('#form_producto')[0];
+            var fd = new FormData(form);
+            fd.append("id_compra",id_compra);
+
+            $.ajax({
+               type: "POST",
+               url: "compras/agregar_producto",
+               data: fd,
+               processData: false,
+               contentType: false,
+               success: function(data) {
+                    alert(data.result);
+                    if(data.success == "true"){
+                        continuar_compra(data.ID_compra);
+                    }
+               },
+               failure: function(data){
+                    alert("Error, revise log");
+                    console.log(data);
+               }
+            });
+        }
+    }
+
+    function cancelar_Compra(id_compra){
+        var result = confirm("¿Desea cancelar la compra?, Se eliminaran los registros de la compra que se tienen");
+        if(result == true){
+            debugger;
+            var fd = new FormData();
+            fd.append("ID_compra",id_compra);
+            $.ajax({
+               type: "POST",
+               url: "compras/cancelar_compra",
+               data: fd,
+               processData: false,
+               contentType: false,
+               success: function(data) {
+                    alert(data.result);
+                    if(data.success == "true"){
+                        window.location.reload(true);
+                    }
+               },
+               failure: function(data){
+                    alert("Error, revise log");
+                    console.log(data);
+               }
+            });
+        }
+    }
+</script>

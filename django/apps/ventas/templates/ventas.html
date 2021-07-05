@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+{% include '_head.html' %}
+<head>
+    <meta charset="UTF-8">
+    <title>Ventas</title>
+</head>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+
+    <!-- Include Bootstrap Datepicker -->
+    <link href="http://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/a549aa8780dbda16f6cff545aeabc3d71073911e/build/css/bootstrap-datetimepicker.css" rel="stylesheet"/>
+    <script src="http://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/a549aa8780dbda16f6cff545aeabc3d71073911e/src/js/bootstrap-datetimepicker.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <style>
+        html {
+            font-size: 16px;
+        }
+    </style>
+
+
+    <div id="wrapper">
+        {% include '_sidebar.html' %}
+        <div id="content-wrapper" class="d-flex flex-column">
+           <div id="content">
+               {% include '_topbar.html' %}
+               <div class="card">
+                  <div id="fecha_de_venta">
+                      <div class='col-sm-6'>
+                          Fecha de Venta:
+                         <input type='text' class="form-control" id='datetimepicker1' required/>
+                      </div>
+                      <script type="text/javascript">
+                         $(function () {
+                             $('#datetimepicker1').datetimepicker();
+                         });
+                      </script>
+                  </div>
+
+                   <br>
+                  <div id="seleccion_de_cliente">
+                      <div class='col-sm-6'>
+                          Cliente:
+                          <div class="input-group mb-3" >
+                              <input list="clientes_list" id="Cliente" name="Cliente" required placeholder="Ingrese un Nombre, cedula, numero o correo" autocomplete="off" onchange="Consultar_cliente()">
+
+                              <datalist id="clientes_list"></datalist>
+                              <template id="resultstemplate">
+                                <option value="" disabled selected hidden>Seleccione un Cliente</option>
+                                {% for cliente in clientes%}
+                                <option value="{{cliente.document_type}} {{ cliente.document_number }}">{{cliente.document_type}} {{cliente.document_number}} {{cliente.nombre}} {{cliente.apellido}} {{cliente.email}}</option>
+                                {% endfor %}
+                              </template>
+
+                              <button onclick="limpiar_campos()">Limpiar</button>
+                              <button type="button" class="btn btn-success" data-toggle="modal" data-target="#ModalNuevoCliente">
+                                <i class="fas fa-plus"></i> Agregar Cliente
+                              </button>
+                              <!-- Modal -->
+                              <div class="modal fade" id="ModalNuevoCliente" tabindex="-1" role="dialog" aria-labelledby="ModalNuevoClienteLabel" aria-hidden="true" >
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Por favor complete los siguientes campos</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="form_datos" onsubmit="return false;">
+                                                    {% csrf_token %}
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" >Nombre</span>
+                                                        </div>
+                                                        <input type="text" class="form-control" placeholder="Ingrese el nombre del cliente" name="Nombre" required=""/>
+                                                    </div>
+
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">Apellido</span>
+                                                        </div>
+                                                        <input type="text" class="form-control" placeholder="Ingrese los apellidos del cliente" name="Apellido"/>
+                                                    </div>
+
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">Telefono</span>
+                                                        </div>
+                                                        <input type="number" class="form-control" placeholder="Ingrese el telefono del cliente" name="Telefono" required=""/>
+                                                    </div>
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                          <span class="input-group-text">Tipo de Documento</span>
+                                                        </div>
+                                                        <select class="form-control"  id="Tipo_doc" name="Tipo_doc">
+                                                            <option value="CC"> CC </option>
+                                                            <option value="Pasaporte"> Pasaporte </option>
+                                                            <option value="NIT"> NIT </option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                          <span class="input-group-text">Numero de documento</span>
+                                                        </div>
+                                                        <input type="number" class="form-control"  id="Documento_nuevo" placeholder="Ingrese el numero de documento"  name="Documento" required/>
+                                                    </div>
+
+
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" >Email</span>
+                                                        </div>
+                                                        <input type="email" class="form-control" placeholder="Ingrese el email del cliente"  name="Email" required=""/>
+                                                    </div>
+
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" >Direccion</span>
+                                                        </div>
+                                                        <input type="text" class="form-control" placeholder="Ingrese la direccion del cliente" name="Direccion"/>
+                                                    </div>
+
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                        <label class="input-group-text" for="inputGroupSelect01">Ciudad</label>
+                                                        </div>
+                                                        <select class="custom-select" id="inputGroupSelect01" name="Ciudad" class="form-control" class="form-control" required="">
+                                                        {% for ciudad in ciudades %}
+                                                            <option value="{{ ciudad.id }}">{{ciudad.nombre}}</option>
+                                                        {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="comment">Comentario:</label>
+                                                        <textarea class="form-control" rows="3" id="comment" type="text" name="Comentario"></textarea>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-success" onclick="nuevo()">Guardar</button>
+                                                        <button type="button" class="btn btn-danger"  data-dismiss="modal" > Cancelar</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script>
+                                    function nuevo(){
+                                        if($('#form_datos')[0].checkValidity()){
+                                            var form = $('#form_datos')[0];
+                                            var fd = new FormData(form);
+
+                                            $.ajax({
+                                               type: "POST",
+                                               url: "clientes/nuevo",
+                                               data: fd,
+                                               processData: false,
+                                               contentType: false,
+                                               success: function(data) {
+                                                    if(data.success == "true"){
+                                                        $('#Cliente')[0].value = $('#Tipo_doc')[0].value + " " + $('#Documento_nuevo')[0].value;
+
+                                                        document.getElementById("form_datos").reset();
+                                                        $('#form_datos')[0].setAttribute("hidden","true");
+                                                        $('#ModalNuevoCliente')[0].setAttribute("hidden","true");
+
+                                                        Consultar_cliente();
+                                                    }
+                                                    alert(data.result);
+                                               },
+                                               failure: function(data){
+                                                    console.log(data);
+                                               }
+                                            });
+                                        }
+                                    }
+                                </script>
+                                </div>
+
+                          </div>
+                          <script>
+                                var search = document.querySelector('#Cliente');
+                                var results = document.querySelector('#clientes_list');
+                                var templateContent = document.querySelector('#resultstemplate').content;
+                                search.addEventListener('keyup', function handler(event) {
+                                    while (results.children.length) results.removeChild(results.firstChild);
+                                    var inputVal = new RegExp(search.value.trim(), 'i');
+                                    var set = Array.prototype.reduce.call(templateContent.cloneNode(true).children, function searchFilter(frag, item, i) {
+                                        if (inputVal.test(item.textContent) && frag.children.length < 6) frag.appendChild(item);
+                                        return frag;
+                                    }, document.createDocumentFragment());
+                                    results.appendChild(set);
+                                });
+
+
+                                function Consultar_cliente(){
+                                    var datos = $('#Cliente')[0].value;
+                                    var datos = datos.split(" ");
+                                    $.ajax({
+                                       type: "GET",
+                                       url: "clientes/consultar",
+                                       data: {
+                                            "Tipo_documento" : datos[0],
+                                            "Numero_documento" : datos[1],
+                                       },
+                                       success: function(data) {
+                                            console.log(data.result);
+                                            if(data.success == "true"){
+                                                $('#ID')[0].value = data.datos_cliente[0];
+                                                $('#Nombre')[0].value = data.datos_cliente[1];
+                                                $('#Apellido')[0].value = data.datos_cliente[2];
+                                                $('#Telefono')[0].value = data.datos_cliente[3];
+                                                $('#Email')[0].value = data.datos_cliente[4];
+                                                $('#Tipo_documento')[0].value = data.datos_cliente[5];
+                                                $('#Numero_documento')[0].value = data.datos_cliente[6];
+                                                $('#Direccion')[0].value = data.datos_cliente[7];
+                                                $('#Ciudad')[0].value = data.datos_cliente[8];
+                                            }
+                                       },
+                                       failure: function(data){
+                                            alert("Error, revise log");
+                                            console.log(data);
+                                       }
+                                    });
+                                }
+
+                                function limpiar_campos(){
+                                    $('#ID')[0].value = "";
+                                    $('#Cliente')[0].value = "";
+                                    $('#Nombre')[0].value = "";
+                                    $('#Apellido')[0].value = "";
+                                    $('#Telefono')[0].value = "";
+                                    $('#Email')[0].value = "";
+                                    $('#Tipo_documento')[0].value = "";
+                                    $('#Numero_documento')[0].value = "";
+                                    $('#Direccion')[0].value = "";
+                                    $('#Ciudad')[0].value = 1;
+                                }
+                          </script>
+                      </div>
+                  </div>
+
+                  <div id="datos_cliente">
+                      <form id="form_editar" enctype="multipart/form-data" onsubmit="return false;">
+                          {% csrf_token %}
+                          <input id="ID" name="ID" hidden>
+
+                          <div class='col-sm-12'>
+                              Nombre:
+                             <input id="Nombre" name="Nombre" type='text' required/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Apellido:
+                             <input id="Apellido" name="Apellido" type='text'/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Telefono:
+                             <input id="Telefono" name="Telefono" type='number'/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Correo:
+                             <input id="Email" name="Email" type='email'/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Tipo de documento:
+                              <select class="form-control" id="Tipo_documento" name="Tipo_doc">
+                                <option value="CC"> CC </option>
+                                <option value="Pasaporte"> Pasaporte </option>
+                                <option value="NIT"> NIT </option>
+                              </select>
+                          </div>
+                          <div class='col-sm-12'>
+                              Documento:
+                             <input id="Numero_documento" name="Documento" type='text' required/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Direccion:
+                             <input id="Direccion" name="Direccion" type='text'/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Ciudad:
+                             <select class="custom-select" id="Ciudad" name="Ciudad" class="form-control" class="form-control" required="">
+                             {% for ciudad in ciudades %}
+                                <option value="{{ ciudad.id }}">{{ciudad.nombre}}</option>
+                             {% endfor %}
+                            </select>
+                          </div>
+                          <button type="submit" class="btn btn-success" onclick="guardar_edit()">Guardar</button>
+                      </form>
+                      <script>
+                          function guardar_edit(){
+                            if($('#form_editar')[0].checkValidity()){
+                                var form = $('#form_editar')[0];
+                                var fd = new FormData(form);
+                                $.ajax({
+                                   type: "POST",
+                                   url: "clientes/editar",
+                                   data: fd,
+                                   processData: false,
+                                   contentType: false,
+                                   success: function(data) {
+                                        alert(data.result);
+                                        if(data.success == "true"){
+
+                                        }
+                                   },
+                                   failure: function(data){
+                                        console.log(data);
+                                   }
+                                });
+                            }
+                        }
+                      </script>
+                  </div>
+
+                  <div id="seleccion_de_producto">
+                      <br>
+                      Articulo:
+                      <input list="productos_list" id="Producto" placeholder="Ingrese un Nombre o un codigo de producto" autocomplete="off" onchange="Consultar_articulo()">
+
+                      <datalist id="productos_list"></datalist>
+                      <template id="resultadoproducto">
+                        <option value="" disabled selected hidden>Seleccione un producto</option>
+                        {% for producto in productos%}
+                        <option value="{{producto.codigo}}">{{producto.codigo}} {{producto.nombre}}</option>
+                        {% endfor %}
+                      </template>
+
+                      <button onclick="limpiar_articulo()">Limpiar</button>
+                      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal1">
+                            <i class="fas fa-plus"></i> Nuevo Articulo
+                      </button>
+                      <!-- Modal -->
+                      <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModal1Label" aria-hidden="true" >
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Por favor complete los siguientes campos</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                        <form id="form_datos"  enctype="multipart/form-data" onsubmit="return false;">
+                                            {% csrf_token %}
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="basic-addon1">Codigo</span>
+                                                </div>
+                                                <input type="text" class="form-control" placeholder="Ingrese codigo" aria-describedby="basic-addon1" id="codigo" name="Codigo" required=""/>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="basic-addon1">Artículo</span>
+                                                </div>
+                                                <input type="text" class="form-control" placeholder="Ingrese el nombre del articulo" aria-describedby="basic-addon1" id="articulo" name="Articulo" required=""/>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="basic-addon1">Marca</span>
+                                                </div>
+                                                <input type="text" class="form-control" placeholder="Ingrese la marca" aria-describedby="basic-addon1" id="marca" name="Marca" required=""/>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="basic-addon1">Categoria</span>
+                                                </div>
+                                                <input type="text" class="form-control" placeholder="Insertar categoria" aria-describedby="basic-addon1" id="categoria" name="Categoria" required=""/>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="basic-addon1">Precio de compra</span>
+                                                </div>
+                                                <input type="number" class="form-control" placeholder="Ingresar el valor de compra" aria-describedby="basic-addon1" id="costo" name="Costo" onchange="calcular_valor('new')" onkeyup="calcular_valor('new')" required=""/>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="basic-addon1">Ganancia</span>
+                                                </div>
+                                                <input type="number" class="form-control" placeholder="Ingresar la ganancia que se quiere aplicar" aria-describedby="basic-addon1" id="ganancia" name="Ganancia" onchange="calcular_valor('new')" onkeyup="calcular_valor('new')" required=""/>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="basic-addon1">Impuesto</span>
+                                                </div>
+                                                <input type="number" class="form-control" placeholder="Ingrese la marca" aria-describedby="basic-addon1" id="impuesto" name="Impuesto" onchange="calcular_valor('new')" onkeyup="calcular_valor('new')" value="19" required=""/>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">%</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="basic-addon1">Valor unitario</span>
+                                                </div>
+                                                <input type="number" class="form-control" aria-describedby="basic-addon1" id="valor_unitario" name="Valor_unitario" disabled/>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                  <label class="input-group-text">Proveedor</label>
+                                                </div>
+                                                <select class="custom-select" id="proveedor" name="Proveedor" class="form-control" required="">
+
+                                                  {% for proveedor in proveedores %}
+                                                    <option value="{{ proveedor.id }}">{{ proveedor.nombre }}  {{ proveedor.apellido }}</option>
+                                                  {% endfor %}
+
+                                                </select>
+                                              </div>
+
+                                            <div>
+                                                <label>Imagen a subir</label>
+                                                <input id="imagen" name="Imagen" type="file" class="btn btn-info">
+                                            </div>
+                                            <p></p>
+
+                                            <div class="modal-footer">
+                                                <button type="submit" id="btn_new" class="btn btn-success" onclick="guardar()">Guardar</button>
+                                                <button type="button" class="btn btn-danger"  data-dismiss="modal" onclick="cancelar(this)"> Cancelar</button>
+                                            </div>
+                                        </form>
+                                </div>
+                            </div>
+                        </div>
+                          <script>
+                              function calcular_valor(tipo){
+                                if(tipo == "new"){
+                                    var iva = ($('#impuesto')[0].value/100)+1;
+                                    var costo = $('#costo')[0].value;
+                                    var ganancia = $('#ganancia')[0].value;
+                                    costo = parseFloat(costo) + parseFloat(ganancia);
+                                    $('#valor_unitario')[0].value = parseFloat(costo*iva).toFixed(2);
+                                    if(isNaN(iva) || isNaN(costo) || isNaN(ganancia)){
+                                        $("#btn_new").attr("disabled", true);
+                                    }
+                                    else{
+                                        $("#btn_new").attr("disabled", false);
+                                    }
+                                }
+                                else if(tipo == "edit"){
+                                    var iva = ($('#impuesto_edit')[0].value/100)+1;
+                                    var costo = $('#costo_edit')[0].value;
+                                    var ganancia = $('#ganancia_edit')[0].value;
+                                    costo = parseFloat(costo) + parseFloat(ganancia);
+                                    $('#valor_unitario_edit')[0].value = parseFloat(costo*iva).toFixed(2);
+                                    if(isNaN(iva) || isNaN(costo) || isNaN(ganancia)){
+                                        $("#btn_edit").attr("disabled", true);
+                                    }
+                                    else{
+                                        $("#btn_edit").attr("disabled", false);
+                                    }
+                                }
+                            }
+                          </script>
+                      </div>
+
+                      <script>
+                            var search_articulo = document.querySelector('#Producto');
+                            var results_articulo = document.querySelector('#productos_list');
+                            var templateContent_articulo = document.querySelector('#resultadoproducto').content;
+                            search_articulo.addEventListener('keyup', function handler(event) {
+                                while (results_articulo.children.length) results_articulo.removeChild(results_articulo.firstChild);
+                                var inputVal = new RegExp(search_articulo.value.trim(), 'i');
+                                var set = Array.prototype.reduce.call(templateContent_articulo.cloneNode(true).children, function searchFilter(frag, item, i) {
+                                    if (inputVal.test(item.textContent) && frag.children.length < 6) frag.appendChild(item);
+                                    return frag;
+                                }, document.createDocumentFragment());
+                                results_articulo.appendChild(set);
+                            });
+
+                            function Consultar_articulo(){
+                                $.ajax({
+                                   type: "GET",
+                                   url: "articulos/consultar",
+                                   data: {
+                                        "Codigo" : $('#Producto')[0].value,
+                                   },
+                                   success: function(data) {
+                                        console.log(data.result);
+                                        if(data.success == "true"){
+                                            $('#ID_articulo')[0].value = data.data_articulo[0];
+                                            $('#Codigo_articulo')[0].value = data.data_articulo[1];
+                                            $('#Nombre_articulo')[0].value = data.data_articulo[2];
+                                            $('#Marca_articulo')[0].value = data.data_articulo[3];
+                                            $('#Categoria_articulo')[0].value = data.data_articulo[4];
+                                            $('#Precio_unitario')[0].value = data.data_articulo[5];
+                                            $('#IVA')[0].value = data.data_articulo[6];
+                                        }
+                                   },
+                                   failure: function(data){
+                                        alert("Error, revise log");
+                                        console.log(data);
+                                   }
+                                });
+                            }
+
+                            function limpiar_articulo(){
+                                $('#ID')[0].value = "";
+                                $('#Cliente')[0].value = "";
+                                $('#Nombre')[0].value = "";
+                                $('#Apellido')[0].value = "";
+                                $('#Telefono')[0].value = "";
+                                $('#Email')[0].value = "";
+                                $('#Tipo_documento')[0].value = "";
+                                $('#Numero_documento')[0].value = "";
+                                $('#Direccion')[0].value = "";
+                                $('#Ciudad')[0].value = 1;
+                            }
+                      </script>
+                      <div>
+                          <input hidden id="ID_articulo">
+                          <div class='col-sm-12'>
+                              Codigo:
+                             <input id="Codigo_articulo" type='text' required/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Nombre:
+                             <input id="Nombre_articulo" type='text' required/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Marca:
+                             <input id="Marca_articulo" type='text' required/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Categoria:
+                             <input id="Categoria_articulo" type='text' required/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Precio unitario:
+                             <input id="Precio_unitario" type='number' required/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Iva:
+                             <input id="IVA" type='number' required/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Cantidad:
+                             <input type='number' required/>
+                          </div>
+                          <div class='col-sm-12'>
+                              Total:
+                             <input type='number' required/>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+               <div id="table_div">
+
+               </div>
+          </div>
+        </div>
+    </div>
+
+    {% include '_footer.html' %}
+    </body>
+</html>
+{% csrf_token %}

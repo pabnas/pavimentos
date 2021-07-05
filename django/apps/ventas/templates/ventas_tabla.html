@@ -1,0 +1,469 @@
+<body>
+    <form id="form_finalizar" enctype="multipart/form-data" onsubmit="return false;">
+        {% csrf_token %}
+        <div class="card"  style="margin: 1% 2% 0% 2%; ">
+            <div class="card-body" id="datos_venta">
+                <div class="grid-container">
+                    <div>
+                        <img class="mx-auto d-block" src="/media/logo_prueba.png">
+                    </div>
+                    <div>
+                        <h2>{{empresa.nombre}}</h2>
+                        <h2>{{empresa.nit}}</h2>
+                        <h3>{{empresa.direccion}}</h3>
+                        <h3>{{empresa.telefono}}</h3>
+                        <h3>{{empresa.email}}</h3>
+                    </div>
+                    <div>
+                        <table>
+                            <tbody><tr>
+                                <th class="color_tabla">Nº Factura</th>
+                                <td>{{ Venta.id }}</td>
+                            </tr>
+                            <tr>
+                                <th class="color_tabla">Fecha Emision</th>
+                                <td>{{ Venta.created_at|date:"j/n/Y g:h A"}}</td>
+                            </tr>
+                            <tr>
+                                <th class="color_tabla">Fecha Vencimiento</th>
+                                <td>
+                                    <input style="border-width:0px;border:none;" type="text" class="form-control" id="fecha_vencimiento">
+                                    <script type="text/javascript">
+                                    $(function () {
+                                        $('#fecha_vencimiento').datetimepicker();
+                                    });
+                                </script>
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+                    <p></p>
+                </div>
+                <div class="grid-container">
+                        <table>
+                            <tbody><tr>
+                                <th class="color_tabla">Nombre</th>
+                                <td>{{ Venta.cliente.nombre }} {{ Venta.cliente.apellido }}</td>
+                                <th class="color_tabla">Telefono</th>
+                                <td>{{ Venta.cliente.telefono }}</td>
+                            </tr><tr>
+                                <th class="color_tabla">Documento</th>
+                                <td>{{ Venta.cliente.document_number }}</td>
+                                <th class="color_tabla">Direccion</th>
+                                <td>{{ Venta.cliente.direccion }}</td>
+                            </tr>
+                            <tr>
+                                <th class="color_tabla">Correo</th>
+                                <td>{{ Venta.cliente.email }}</td>
+                                <th class="color_tabla">Ciudad</th>
+                                <td>{{ Venta.cliente.ciudad.nombre}}</td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+
+                <div class="grid-container2">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered" id="centrada">
+                            <thead class="thead color_tabla">
+                                <tr>
+                                    <th scope="col">Codigo de Producto</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Valor unidad</th>
+                                    <th scope="col">Cantidad</th>
+                                    <th scope="col">Descuento</th>
+                                    <th scope="col">Valor</th>
+                                    <th scope="col">Comentario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for articulo in Articulos %}
+                                <tr >
+                                    <td>{{articulo.Codigo}}</td>
+                                    <td>{{articulo.Nombre}}</td>
+                                    <td>{{articulo.Valor_Unidad|stringformat:".2f" }}</td>
+                                    <td>{{articulo.Unidades}}</td>
+                                    <td>{{articulo.Descuento|stringformat:".2f" }}</td>
+                                    <td>{{articulo.Valor|stringformat:".2f" }}</td>
+                                    <td style="max-width:300px;" >{{articulo.Comentario}}</td>
+                                </tr>
+                            {% endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="grid-container3">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th scope="col" class="color_tabla">Subtotal</th>
+                                <th id="subtotal_val" scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr >
+                                    <td class="color_tabla">% Descuento</td>
+                                    <td>
+                                        <input id="descuento_val" type="number" max="100" min="0" value="0"
+                                               placeholder="Ingrese el descuento que desee aplicar" onkeyup="eval_total_final()"
+                                               onchange="eval_total_final()" required name="Descuento" style="border-width:0px;border:none;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="color_tabla">% IVA</td>
+                                    <td i>
+                                        <input id="iva_val" type="number" max="100" min="0" value="19"
+                                               placeholder="Ingrese el descuento que desee aplicar" onkeyup="eval_total_final()"
+                                               onchange="eval_total_final()" required name="IVA" style="border-width:0px;border:none;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="color_tabla" scope="col">Total</td>
+                                    <td id="total_val" scope="col"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card-footer " style="text-align: right;">
+                <div>
+                    <label>
+                        Por favor seleccione un metodo de pago
+                    </label>
+                    <select name="Forma_de_pago" id="Forma_de_pago" required onchange="mostrar_opcion()">
+                      <option value="Efectivo">Efectivo</option>
+                      <option value="Tarjeta">Tarjeta</option>
+                    </select>
+                    <div id="voucher" hidden>
+                        <label>Ingrese el numero del voucher</label>
+                        <input id="num_voucher" type="text" name="Num_voucher">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" data-toggle="modal" data-target="#nuevo_articulo">
+                    <i class="fas fa-clipboard-list"></i> Agregar Producto
+                </button>
+                <button id="btn_finalizar" type="submit" class="btn btn-primary"  data-dismiss="modal" onclick="finalizar_Venta()">
+                    <i class="fas fa-shopping-bag" ></i> Finalizar Venta
+                </button>
+                <button type="button" class="btn btn-danger"  data-dismiss="modal" onclick="cancelar_Venta({{ Venta.id }})" >
+                    <i class="fas fa-ban"></i> Cancelar Venta
+                </button>
+            </div>
+        </div>
+    </form>
+
+
+    
+    <!-- Modal -->
+    <div class="modal fade" id="nuevo_articulo" tabindex="-1" role="dialog" aria-hidden="true" >
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Por favor complete los siguientes campos</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="form_producto" onsubmit="return false;">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Codigo del articulo</span>
+                            </div>
+                            <input list="productos_list" id="Codigo" name="Codigo" onchange="cargar_datos_articulo(this)" required="">
+                            <datalist id="productos_list">
+                                <option value="" disabled selected hidden>Seleccione un articulo</option>
+                                {% for producto in productos%}
+                                <option value="{{ producto.codigo }}">{{ producto.codigo}} {{ producto.nombre}}</option>
+                                {% endfor %}
+                            </datalist>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Cantidad</span>
+                            </div>
+                            <input type="number" class="form-control" value="1" placeholder="Ingrese La cantidad" aria-describedby="basic-addon1" id="Cantidad" name="Cantidad" required="" onchange="calcular_total()" onkeyup="calcular_total()"/>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Valor unitario</span>
+                            </div>
+                            <input type="number" value="0" class="form-control" aria-describedby="basic-addon1" id="Valor_unitario" name="Valor_unitario" disabled/>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Descuento %</span>
+                            </div>
+                            <input type="number" value="0" class="form-control" placeholder="Ingrese el descuento que desee aplicar" aria-describedby="basic-addon1" id="Descuento" name="Descuento" onchange="calcular_total()" onkeyup="calcular_total()" required/>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Subtotal</span>
+                            </div>
+                            <input type="number" value="0" class="form-control" aria-describedby="basic-addon1" id="Subtotal" name="Subtotal" disabled/>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Total</span>
+                            </div>
+                            <input type="number" value="0" class="form-control" aria-describedby="basic-addon1" id="Total" name="Total" disabled/>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Comentario:</label>
+                            <textarea class="form-control" rows="3"  type="text" id="comentario" name="Comentario"></textarea>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button disabled id="btn_add_new" data-dismiss="modal" type="submit" class="btn btn-success" onclick="agregar({{ Venta.id }})">Guardar</button>
+                            <button type="button" class="btn btn-danger"  data-dismiss="modal" > Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<style>
+    .color_tabla{
+        background: var(--main_color);
+        color:#fff;
+    }
+
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 5px;
+      text-align: left;
+    }
+
+    .no_negrita {
+        font-weight: normal;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: auto auto auto;
+      grid-column-gap: 5%;
+    }
+    .grid-container1 {
+      display: grid;
+      grid-template-columns: auto auto;
+      grid-column-gap: 8%;
+    }
+
+    .grid-container2 {
+      display: grid;
+      grid-template-columns: auto;
+      padding: 3% 1%;
+    }
+    .grid-container3 {
+      display: grid;
+      grid-template-columns: auto auto auto auto auto;
+      padding: 3% 1%;
+    }
+
+    #centrada {
+    text-align: center;
+    }
+</style> 
+
+</body>
+<style>
+    .html2canvas-container { width: 1500px !important; height: 3000px !important; }
+</style>
+<script>
+    function mostrar_opcion(){
+        $('#num_voucher')[0].value = '';
+        if( $('#Forma_de_pago')[0].value == "Tarjeta"){
+            $('#voucher')[0].removeAttribute("hidden");
+            $('#num_voucher')[0].setAttribute("required","true");
+        }
+        else{
+            $('#num_voucher')[0].removeAttribute("required");
+            $('#voucher')[0].setAttribute("hidden","true");
+        }
+    }
+
+    $('document').ready(function(){
+        var subtotal = 0;
+        $('#centrada tr td:nth-child(6)').each(function () {
+            subtotal += eval(parseFloat($(this).html()).toFixed(2));
+            console.log(subtotal);
+        });
+        $('#subtotal_val')[0].innerHTML =parseFloat(subtotal).toFixed(2);
+        eval_total_final();
+    });
+
+    function eval_total_final(){
+        var subtotal = parseFloat($('#subtotal_val')[0].innerHTML).toFixed(2);
+        var descuento = parseFloat(($('#descuento_val')[0].value/100) * subtotal ).toFixed(2);
+        var iva = parseFloat(($('#iva_val')[0].value/100)+1).toFixed(2);
+        var total = subtotal - descuento;
+        total = total * iva;
+        $('#total_val')[0].innerHTML = parseFloat(total).toFixed(2);
+    }
+
+    var img;
+    function finalizar_Venta(){
+        var doc = new jsPDF();
+        var specialElementHandlers = {
+            '#editor': function (element, renderer) {
+                return true;
+            }
+        };
+        html2canvas($("#datos_venta"),{
+            background: '#ffffff',
+            onrendered: function(canvas){
+                 //document.body.appendChild(canvas);
+                 // Get base64URL
+                 var base64URL = canvas.toDataURL('image/jpeg').replace('image/jpeg', 'image/jpeg');
+                 img = base64URL;
+                 //console.log("imagen");
+                 enviar_formulario_finalizar();
+                 //var doc = new jsPDF();
+                 //doc.addImage(img,'JPEG',20,20);
+                 //doc.save('Factura_{{ Venta.id }}.pdf');
+            }
+        });
+    }
+
+
+    function enviar_formulario_finalizar(){
+        if($('#form_finalizar')[0].checkValidity()){
+            var form = $('#form_finalizar')[0];
+            var fd = new FormData(form);
+            fd.append('Subtotal',$('#subtotal_val')[0].innerHTML);
+            fd.append('ID_venta',{{ Venta.id  }});
+            fd.append('Total',$('#total_val')[0].innerHTML);
+            console.log("datos");
+            fd.append('Image',img);
+            $.ajax({
+               type: "POST",
+               url: "ventas/finalizar",
+               data: fd,
+               processData: false,
+               contentType: false,
+               success: function(data) {
+                    alert(data.result);
+                    if(data.success == "true"){
+                        document.getElementById("form_finalizar").reset();
+                        $('#form_finalizar')[0].setAttribute("hidden","true");
+                        window.location.reload(true);
+                    }
+               },
+               failure: function(data){
+                    console.log(data);
+               }
+            });
+        }
+    }
+
+    function cargar_datos_articulo(e){
+        var id = e.value;
+
+        $.ajax({
+           type: "GET",
+           url: "ventas/cargar_detalles",
+           data: {
+                "id_producto": id,
+           },
+           success: function(data) {
+                $('#btn_add_new')[0].setAttribute("disabled", "");
+                console.log(data.result);
+                if(data.success == "true"){
+                    $('#Valor_unitario')[0].value = data.valor;
+                    calcular_total();
+                }
+           },
+           failure: function(data){
+                alert("Error, revise log");
+                console.log(data);
+           }
+        });
+    }
+
+    function calcular_total(){
+        //calular subtotal
+        var valor_sin_desc = parseInt($('#Cantidad')[0].value) * parseFloat($('#Valor_unitario')[0].value);
+        var por_desc = parseFloat($('#Descuento')[0].value)/100;
+        por_desc = por_desc * valor_sin_desc;
+        $('#Subtotal')[0].value = valor_sin_desc - por_desc;
+        //calcular total con iva
+        var total = parseFloat($('#Subtotal')[0].value);
+        $('#Total')[0].value = total;
+        debugger;
+        if(isNaN(valor_sin_desc) || isNaN(por_desc) || isNaN(total) ){
+            $('#btn_add_new')[0].setAttribute("disabled", "");
+        }
+        else{
+           $('#btn_add_new')[0].removeAttribute("disabled");
+        }
+    }
+
+    function agregar(id_venta){
+        if($('#form_producto')[0].checkValidity()){
+            var form = $('#form_producto')[0];
+            var fd = new FormData(form);
+            fd.append("id_venta",id_venta);
+
+            $.ajax({
+               type: "POST",
+               url: "ventas/agregar_producto",
+               data: fd,
+               processData: false,
+               contentType: false,
+               success: function(data) {
+                    alert(data.result);
+                    if(data.success == "true"){
+                        continuar_venta(data.ID_Venta);
+                    }
+               },
+               failure: function(data){
+                    alert("Error, revise log");
+                    console.log(data);
+               }
+            });
+        }
+    }
+
+    function cancelar_Venta(id_venta){
+        var result = confirm("¿Desea cancelar la venta?, Se eliminaran los registros de la venta que se tienen");
+        if(result == true){
+            debugger;
+            var fd = new FormData();
+            fd.append("ID_venta",id_venta);
+            $.ajax({
+               type: "POST",
+               url: "ventas/cancelar_venta",
+               data: fd,
+               processData: false,
+               contentType: false,
+               success: function(data) {
+                    alert(data.result);
+                    if(data.success == "true"){
+                        window.location.reload(true);
+                    }
+               },
+               failure: function(data){
+                    alert("Error, revise log");
+                    console.log(data);
+               }
+            });
+        }
+    }
+</script>

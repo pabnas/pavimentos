@@ -1,0 +1,300 @@
+{% load static %}
+{% include '_head.html' %}
+
+<title> Home {{ usuario.nombre }} </title>
+
+<body id="page-top">
+  <div id="wrapper">
+    {% include '_sidebar.html' %}
+
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
+        {% include '_topbar.html' %}
+         {% if empresa_vacia is True%}
+          <h1>
+              Este Usuario no se encuentra relacionado con ninguna empresa
+          </h1>
+          {% else %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Tablero</h1>
+          </div>
+
+          <!-- Content Row -->
+          <div class="row">
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="requision" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Requision</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>!-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-user-alt fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="orden_de_compra" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Orden de compra</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>!-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-user-alt fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="registro_material" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Registro de Material</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>!-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-user-alt fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="facturacion" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Facturacion</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>!-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-user-alt fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="abonos" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Abonos</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>!-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-user-alt fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="proveedores" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Proveedores</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-truck-loading fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="articulos" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Articulos</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-box fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="empresas" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Empresa</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-building fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="compras" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Compras</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-cash-register fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="ventas" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Ventas</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-shopping-cart fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="factura" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Facturas</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-file-invoice fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="inventario" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Inventario</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-boxes fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="informes" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Informes</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-poll fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="registro" class="justify-content-center">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Registrar</div>
+                        <!--<div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>-->
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-user-plus fa-3x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+        {% endif %}
+      </div>
+
+      {% include '_footer.html' %}
+    </div>
+  </div>
+    <!-- Custom scripts for all pages-->
+      <!-- Page level plugins -->
+      <script src="{% static 'js/vendor/chart.js/Chart.min.js' %}"></script>
+      <!-- Page level custom scripts -->
+      <script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
+      <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
+
+</body>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+{% include '_head.html' %}
+<head>
+    <meta charset="UTF-8">
+    <title>Ventas</title>
+</head>
+<body>
+
+<script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
+
+<div id="wrapper">
+        {% include '_sidebar.html' %}
+        <div id="content-wrapper" class="d-flex flex-column">
+          <div id="content">
+            {% include '_topbar.html' %}
+            <div class="card">
+                <h1 class="card-header">
+                    <i class="fab fa-sellsy" style="color: #433BFF;"></i> Ventas
+                </h1>
+                <div class="card-body">
+                    <div class="grid-container">
+                        {% if ventas|length != 0 %}
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-primary">
+                                        Ventas pendientes: <span class="badge badge-light">{{ ventas|length }}</span>
+                                </button>
+                            </div>
+                            <select class="custom-select" name="Venta" id="Venta">
+                                {% for venta in ventas %}
+                                <option value="{{ venta.id }}">{{ venta.cliente.nombre}} {{venta.cliente.apellido}} {{ venta.created_at}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" onclick="continuar_venta($('#Venta')[0].value)" id="btn_continuar_venta"><i class="fas fa-coins"></i> Continuar venta</button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="grid-container1" id="div_venta_nueva">
+                        <div class="input-group mb-3" >
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-success">
+                                        Cliente:
+                                </button>
+                             </div>
+                            <select class="custom-select" list="clientes_list" name="Cliente" id="Cliente">
+                                {% for cliente in clientes%}
+                                <option value="{{ cliente.id }}">{{ cliente.nombre}} {{cliente.apellido}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <button class="btn btn-success" onclick="nueva_venta()" id="btn_nueva_venta"><i class="fas fa-cart-plus"></i> Nueva venta</button>
+                            <button class="btn btn-success" data-toggle="modal" data-target="#Modal_cliente_nuevo"><i class="fas fa-cart-plus"></i> Nuevo Cliente</button>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="Modal_cliente_nuevo" tabindex="-1" role="dialog" aria-labelledby="exampleModal1Label" aria-hidden="true" >
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="">Por favor complete los siguientes campos</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="form_datos" onsubmit="return false;">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Nombre</span>
+                                                </div>
+                                                <input type="text" class="form-control" placeholder="Ingrese el nombre del cliente" aria-describedby="basic-addon1" id="nombre" name="Nombre" required=""/>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Apellido</span>
+                                                </div>
+                                                <input type="text" class="form-control" placeholder="Ingrese los apellidos del cliente" aria-describedby="basic-addon1" id="apellido" name="Apellido"/>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Telefono</span>
+                                                </div>
+                                                <input type="number" class="form-control" placeholder="Ingrese el telefono del cliente" aria-describedby="basic-addon1" id="telefono" name="Telefono" required=""/>
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text">Tipo de Documento</span>
+                                                </div>
+                                                <select class="form-control" aria-describedby="basic-addon1" id="Tipo_doc" name="Tipo_doc">
+                                                    <option value="CC"> CC </option>
+                                                    <option value="Pasaporte"> Pasaporte </option>
+                                                    <option value="NIT"> NIT </option>
+                                                </select>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text">Numero de documento</span>
+                                                </div>
+                                                <input type="number" class="form-control" placeholder="Ingrese el numero de documento" aria-describedby="basic-addon1" id="documento" name="Documento" required/>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Email</span>
+                                                </div>
+                                                <input type="email" class="form-control" placeholder="Ingrese el email del cliente" aria-describedby="basic-addon1"  id="email" name="Email" required=""/>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Direccion</span>
+                                                </div>
+                                                <input type="text" class="form-control" placeholder="Ingrese la direccion del cliente" aria-describedby="basic-addon1"  id="direccion" name="Direccion"/>
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                <label class="input-group-text" for="inputGroupSelect01">Ciudad</label>
+                                                </div>
+                                                <select class="custom-select" id="inputGroupSelect01"  id="ciudad" name="Ciudad" class="form-control" class="form-control" required="">
+                                                {% for ciudad in ciudades %}
+                                                    <option value="{{ ciudad.id }}">{{ciudad.nombre}}</option>
+                                                {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="comment">Comentario:</label>
+                                                <textarea class="form-control" rows="3" id="comment" type="text" id="comentario" name="Comentario"></textarea>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success" onclick="guardar()">Guardar</button>
+                                                <button type="button" class="btn btn-danger"  data-dismiss="modal" > Cancelar</button>
+                                            </div>
+                                            <script>
+                                                function guardar(){
+                                                    if($('#form_datos')[0].checkValidity()){
+                                                        var form = $('#form_datos')[0];
+                                                        var fd = new FormData(form);
+
+                                                        $.ajax({
+                                                           type: "POST",
+                                                           url: "clientes/nuevo",
+                                                           data: fd,
+                                                           processData: false,
+                                                           contentType: false,
+                                                           success: function(data) {
+                                                                if(data.success == "true"){
+                                                                    document.getElementById("form_datos").reset();
+                                                                    $('#form_datos')[0].setAttribute("hidden","true");
+                                                                    $('#Modal_cliente_nuevo')[0].setAttribute("hidden","true");
+                                                                    window.location.reload(true);
+                                                                }
+                                                                alert(data.result);
+                                                           },
+                                                           failure: function(data){
+                                                                console.log(data);
+                                                           }
+                                                        });
+                                                    }
+                                                }
+                                            </script>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <style>
+            .grid-container {
+                display: grid;
+                grid-template-columns: auto auto;
+                grid-column-gap: 2%;
+              }
+
+              .grid-container1 {
+                display: grid;
+                grid-template-columns: auto auto;
+                grid-column-gap: 2%;
+              }
+            </style>
+
+            <div id="table_div">
+            </div>
+          </div>
+        </div>
+    </div>
+    {% include '_footer.html' %}
+</body>
+</html>
+
+{% csrf_token %}
+<script>
+    function nueva_venta(){
+        $.ajax({
+           type: "GET",
+           url: "ventas/get_id_nueva_venta",
+           data: {
+                "Cliente_id" : $('#Cliente')[0].value,
+           },
+           success: function(data) {
+                console.log(data.result);
+                if(data.success == "true"){
+                    $('#btn_nueva_venta')[0].setAttribute("disabled", "");
+                    $('#Cliente')[0].setAttribute("disabled", "");
+
+                    continuar_venta(data.ID);
+                }
+           },
+           failure: function(data){
+                alert("Error, revise log");
+                console.log(data);
+           }
+        });
+    }
+
+    function continuar_venta(id_venta){
+        $.ajax({
+           type: "GET",
+           url: "ventas/cargar_venta",
+           data: {
+                "id_venta": id_venta,
+           },
+           success: function(data) {
+                $("#table_div").html(data);
+                $('#div_venta_nueva')[0].setAttribute("hidden", "");
+           },
+           failure: function(data){
+                alert("Error, revise log");
+                console.log(data);
+           }
+        });
+    }
+</script>

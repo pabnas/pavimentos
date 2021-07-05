@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+{% include '_head.html' %}
+<head>
+    <meta charset="UTF-8">
+    <title>Compras</title>
+</head>
+<body>
+    <div id="wrapper">
+            {% include '_sidebar.html' %}
+            <div id="content-wrapper" class="d-flex flex-column">
+              <div id="content">
+                {% include '_topbar.html' %}
+                <div class="card">
+                    <h1 class="card-header">
+                        <i class="fab fa-sellsy" style="color: #433BFF;"></i> Compras
+                    </h1>
+                    <div class="card-body">
+                        <div class="grid-container">
+                            {% if compras|length != 0 %}
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <button type="button" class="btn btn-primary">
+                                            Compras pendientes: <span class="badge badge-light">{{ compras|length }}</span>
+                                    </button>
+                                </div>
+                                <select class="custom-select" name="Compra" id="Compra">
+                                    {% for compra in compras %}
+                                    <option value="{{ compra.id }}">{{ compra.proveedor.nombre}} {{compra.proveedor.apellido}} {{ compra.created_at}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <button class="btn btn-primary" onclick="continuar_compra($('#Compra')[0].value)" id="btn_continuar_compra"><i class="fas fa-coins"></i> Continuar venta</button>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="grid-container1" id="div_compra_nueva">
+                            <div class="input-group mb-3" >
+                                <div class="input-group-prepend">
+                                    <button type="button" class="btn btn-success">
+                                            Proveedor:
+                                    </button>
+                                 </div>
+                                <select class="custom-select" list="clientes_list" name="Proveedor" id="Proveedor">
+                                    {% for proveedor in proveedores%}
+                                    <option value="{{ proveedor.id }}">{{ proveedor.nombre}} {{proveedor.apellido}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div>
+                                <button class="btn btn-success" onclick="nueva_compra()" id="btn_nueva_compra"><i class="fas fa-cart-plus"></i> Nueva Compra</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <style>
+                .grid-container {
+                    display: grid;
+                    grid-template-columns: auto auto;
+                    grid-column-gap: 2%;
+                  }
+
+                  .grid-container1 {
+                    display: grid;
+                    grid-template-columns: auto auto;
+                    grid-column-gap: 2%;
+                  }
+                </style>
+
+                <div id="table_div"> </div>
+              </div>
+        </div>
+    </div>
+    {% include '_footer.html' %}
+</body>
+</html>
+
+{% csrf_token %}
+<script>
+    function nueva_compra(){
+        $.ajax({
+           type: "GET",
+           url: "compras/get_id_nueva_compra",
+           data: {
+                "Proveedor_id" : $('#Proveedor')[0].value,
+           },
+           success: function(data) {
+                console.log(data.result);
+                if(data.success == "true"){
+                    $('#btn_nueva_compra')[0].setAttribute("disabled", "");
+                    $('#Proveedor')[0].setAttribute("disabled", "");
+
+                    continuar_compra(data.ID);
+                }
+           },
+           failure: function(data){
+                alert("Error, revise log");
+                console.log(data);
+           }
+        });
+    }
+
+    function continuar_compra(id_compra){
+        $.ajax({
+           type: "GET",
+           url: "compras/cargar_compra",
+           data: {
+                "id_compra": id_compra,
+           },
+           success: function(data) {
+                $("#table_div").html(data);
+                $('#div_compra_nueva')[0].setAttribute("hidden", "");
+           },
+           failure: function(data){
+                alert("Error, revise log");
+                console.log(data);
+           }
+        });
+    }
+</script>

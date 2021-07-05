@@ -1,0 +1,37 @@
+<div class="grid-container">
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered" id="centrada">
+            <thead class="thead"style="background:#5CF78A;">
+                <tr style="color: #ffffff;">
+                    <th scope="col">ID</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Medio de pago</th>
+                    <th scope="col">Vendedor</th>
+                    <th scope="col">Detalles</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for factura in Facturas %}
+                <tr >
+                    <td>{{factura.ID}}</td>
+                    <td>{{factura.Fecha}}</td>
+                    <td>{{factura.Total|stringformat:".2f" }}</td>
+                    <td>{{factura.Medio_de_Pago}}</td>
+                    <td>{{factura.Vendedor}}</td>
+                    <td>
+                        <a href="{{factura.Detalles}}" target="_blank">
+                            <i class="fas fa-search" style="color: #433BFF;"></i>
+                            <span class="tooltiptext">Ver imagen</span>
+                        </a>
+                        <i class="fas fa-print" style="color: #433BFF;"
+                           onclick="printJS('{{factura.Detalles}}','image')">
+                            <span class="tooltiptext">Imprimir</span>
+                        </i>
+                    </td>
+                </tr>
+            {% endfor%}
+            </tbody>
+        </table>
+    </div>
+</div>

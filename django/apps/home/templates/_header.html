@@ -1,0 +1,52 @@
+<header>
+  {% load static %}
+
+  <nav class="navbar navbar-expand-sm navbar-dark fixed-top scrolling-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <img src="{% static 'imagenes/logo_header.png'%}" height="50" >
+      </a>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent-7">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link fas fa-home" href="{% url 'home' %}"> Inicio </a>
+          </li>
+        </ul>
+
+        <div>
+          <label id="label_username" class="text-white"> Hola {{ usuario.nombre }} </label>
+          <button class="btn btn-success" type="button" name="button" onclick="Salir()">
+            <i class="fa fa-power-off"> Salir</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <style>
+    header {
+      padding-bottom: 60px !important;
+    }
+
+    .navbar {
+      background: #680AA5 !important;
+    }
+
+  </style>
+
+  <script>
+    function Salir() {
+      document.cookie = "user=; path=/;";
+      document.cookie = "pass=; path=/;";
+      window.location = "{% url 'login' %}";
+    }
+
+    $( document ).ready(function() {
+      if(getCookie("user") == ""){
+        window.location = "/";
+      }
+    });
+  </script>
+  <br>
+</header>

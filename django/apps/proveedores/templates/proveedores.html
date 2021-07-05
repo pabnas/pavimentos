@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+{% load static %}
+{% include '_head.html' %}
+<title>Proveedores</title>
+
+<body>
+    <div id="wrapper">
+        {% include '_sidebar.html' %}
+        <div id="content-wrapper" class="d-flex flex-column">
+          <div id="content">
+            {% include '_topbar.html' %}
+            <div class="card">
+        <h1 class="card-header">
+            <i class="fas fa-toolbox"style="color: #433BFF;" ></i> Listado de Proveedores
+        </h1>
+
+        <div class="card-body">
+           <!-- Button trigger modal -->
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal1" onclick="show_nuevo()">
+                    <i class="fas fa-plus"></i> Nuevo Proveedor
+            </button>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModal1Label" aria-hidden="true" >
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Por favor complete los siguientes campos</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="form_datos"  enctype="multipart/form-data" onsubmit="return false;">
+                                {% csrf_token %}
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Nombre</span>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Ingrese un nombre" aria-describedby="basic-addon1" id="nombre" name="Nombre" required=""/>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Apellido</span>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Ingrese el apellido" aria-describedby="basic-addon1" id="apellido" name="Apellido"/>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Tipo de Documento</span>
+                                    </div>
+                                    <select class="form-control" aria-describedby="basic-addon1" id="Tipo_doc" name="Tipo_doc">
+                                        <option value="CC"> CC </option>
+                                        <option value="Pasaporte"> Pasaporte </option>
+                                        <option value="NIT"> NIT </option>
+                                    </select>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Numero de documento</span>
+                                    </div>
+                                    <input type="number" class="form-control" placeholder="Ingrese el numero de documento" aria-describedby="basic-addon1" id="documento" name="Documento" required/>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Empresa</span>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Ingrese la empresa" aria-describedby="basic-addon1" id="empresa" name="Empresa" required=""/>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Email</span>
+                                    </div>
+                                    <input type="email" class="form-control" placeholder="Ingrese el email" aria-describedby="basic-addon1" id="email" name="Email" required=""/>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Telefono</span>
+                                    </div>
+                                    <input type="number" class="form-control" placeholder="Ingrese el telefono" aria-describedby="basic-addon1" id="telefono" name="Telefono" required=""/>
+                                </div>
+                                <p></p>
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success" onclick="guardar()">Guardar</button>
+                                    <button type="button" class="btn btn-danger"  data-dismiss="modal" onclick="cancelar(this)"> Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-danger" onclick="borrar()"><i class="fas fa-trash-alt"></i> Borrar </button>
+            <p></p>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered" id="Tabla_datos">
+                    <thead class="thead"style="background:#009D36;">
+                        <tr style="color: #ffffff;">
+                            <th scope="col"><input type="checkbox" id="selectall"/> Todo</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Apellido</th>
+                            <th scope="col">Empresa</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Telefono</th>
+                            <th hidden scope="col">documento</th>
+                            <th hidden scope="col">documento_numero</th>
+                            <th scope="col">Operaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for proveedor in proveedores%}
+                        <tr>
+                            <td><input type="checkbox" class="case" value="{{ proveedor.id }}"/></td>
+                            <td>{{ proveedor.nombre }}</td>
+                            <td>{{ proveedor.apellido }}</td>
+                            <td>{{ proveedor.empresa }}</td>
+                            <td>{{ proveedor.email }}</td>
+                            <td>{{ proveedor.telefono }}</td>
+                            <td hidden>{{ proveedor.document_type }}</td>
+                            <td hidden>{{ proveedor.document_id }}</td>
+                            <td>
+                                <a onclick="editar(this)" data-toggle="modal" data-target="#exampleModal">
+                                    <i class="far fa-edit" style="color: #433BFF;"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modificar las propiedades del proveedor</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="form_editar" hidden enctype="multipart/form-data" onsubmit="return false;">
+                                {% csrf_token %}
+                                <input id="id_form" name="Id_form" hidden>
+                                <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text" id="basic-addon1">Nombre</span>
+                                        </div>
+                                        <input type="text" class="form-control" aria-describedby="basic-addon1" id="nombre_edit" name="Nombre" required=""/>
+                                </div>
+                                <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text" id="basic-addon1">Apellido</span>
+                                        </div>
+                                        <input type="text" class="form-control" aria-describedby="basic-addon1" id="apellido_edit" name="Apellido"/>
+                                </div>
+                                <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text" id="basic-addon1">Empresa</span>
+                                        </div>
+                                        <input type="text" class="form-control" aria-describedby="basic-addon1" id="empresa_edit" name="Empresa" required=""/>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Tipo de Documento</span>
+                                    </div>
+                                    <select class="form-control" aria-describedby="basic-addon1" id="Tipo_doc_edit" name="Tipo_doc">
+                                        <option value="CC"> CC </option>
+                                        <option value="Pasaporte"> Pasaporte </option>
+                                        <option value="NIT"> NIT </option>
+                                    </select>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Numero de documento</span>
+                                    </div>
+                                    <input type="number" class="form-control" placeholder="Ingrese el numero de documento" aria-describedby="basic-addon1" id="documento_edit" name="Documento" required/>
+                                </div>
+                                <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text" id="basic-addon1">Email</span>
+                                        </div>
+                                        <input type="email" class="form-control" aria-describedby="basic-addon1" id="email_edit" name="Email" required=""/>
+                                </div>
+                                <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text" id="basic-addon1">Telefono</span>
+                                        </div>
+                                        <input type="number" class="form-control" aria-describedby="basic-addon1" id="telefono_edit" name="Telefono" onchange="calcular_valor('edit')" onkeyup="calcular_valor('edit')" required=""/>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success" onclick="guardar_edit()">Guardar</button>
+                                    <button type="button" class="btn btn-danger"  onclick="cancelar(this)" data-dismiss="modal"> Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+          </div>
+        </div>
+    </div>
+    {% include '_footer.html' %}
+</body>
+
+
+<script>
+    $("#selectall").on("click", function() {
+      $(".case").prop("checked", this.checked);
+    });
+
+    $(".case").on("click", function() {
+      if ($(".case").length == $(".case:checked").length) {
+        $("#selectall").prop("checked", true);
+      } else {
+        $("#selectall").prop("checked", false);
+      }
+    });
+
+    function cancelar(e){
+        var form_element = (e.parentElement).parentElement;
+        form_element.reset()
+        form_element.hidden = "true";
+    }
+
+    function show_nuevo(){
+        if($('#form_datos')[0].hasAttribute('hidden'))        {
+                $('#form_datos')[0].removeAttribute("hidden");
+            }
+    }
+
+    function guardar(){
+        if($('#form_datos')[0].checkValidity()){
+            var form = $('#form_datos')[0];
+            var fd = new FormData(form);
+            $.ajax({
+               type: "POST",
+               url: "proveedores/nuevo",
+               data: fd,
+               processData: false,
+               contentType: false,
+               success: function(data) {
+                    if(data.success == "true"){
+                        document.getElementById("form_datos").reset();
+                        $('#form_datos')[0].setAttribute("hidden","true");
+                        $('#exampleModal1')[0].setAttribute("hidden","true");
+                        window.location.reload(true);
+                    }
+                    alert(data.result);
+               },
+               failure: function(data){
+                    console.log(data);
+               }
+            });
+        }
+    }
+
+    function editar(e){
+        $('#form_editar')[0].removeAttribute("hidden");
+        var elements = (e.parentElement).parentElement;
+
+        $('#id_form')[0].value = elements.children[0].children[0].value;
+        $('#nombre_edit')[0].value = elements.children[1].textContent;
+        $('#apellido_edit')[0].value = elements.children[2].textContent;
+        $('#empresa_edit')[0].value = elements.children[3].textContent;
+        $('#email_edit')[0].value = elements.children[4].textContent;
+        $('#telefono_edit')[0].value = elements.children[5].textContent;
+        $('#Tipo_doc_edit')[0].value = elements.children[6].textContent;
+        $('#documento_edit')[0].value = elements.children[7].textContent;
+
+       }
+
+    function guardar_edit(){
+        if($('#form_editar')[0].checkValidity()){
+            var form = $('#form_editar')[0];
+            var fd = new FormData(form);
+            $.ajax({
+               type: "POST",
+               url: "proveedores/editar",
+               data: fd,
+               processData: false,
+               contentType: false,
+               success: function(data) {
+                    alert(data.result);
+                    if(data.success == "true"){
+                        document.getElementById("form_editar").reset();
+                        $('#form_editar')[0].setAttribute("hidden","true");
+                        $('#exampleModal')[0].setAttribute("hidden","true");
+                        window.location.reload(true);
+                    }
+               },
+               failure: function(data){
+                    console.log(data);
+               }
+            });
+        }
+    }
+
+    function borrar(){
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        for (var checkbox of checkboxes) {
+            var fd = new FormData();
+            fd.append('ID', checkbox.value);
+            $.ajax({
+               type: "POST",
+               url: "proveedores/borrar",
+               data: fd,
+               processData: false,
+               contentType: false,
+               success: function(data) {
+                    alert(data.result);
+                    if(data.success == "true"){
+                        document.getElementById("form_editar").reset();
+                        $('#form_editar')[0].setAttribute("hidden","true");
+                        window.location.reload(true);
+                    }
+               },
+               failure: function(data){
+                    console.log(data);
+               }
+            });
+        }
+    }
+</script>
+</html>

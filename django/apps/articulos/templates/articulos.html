@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+{% include '_head.html' %}
+<title>Articulos</title>
+
+<body>
+    <div id="wrapper">
+        {% include '_sidebar.html' %}
+        <div id="content-wrapper" class="d-flex flex-column">
+          <div id="content">
+            {% include '_topbar.html' %}
+            <div class="card">
+        <h1 class="card-header">
+            <i class="fas fa-toolbox"style="color: #433BFF;" ></i> Listado de articulos
+        </h1>
+
+        <div class="card-body">
+           <!-- Button trigger modal -->
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal1" onclick="show_nuevo()">
+                    <i class="fas fa-plus"></i> Nuevo Articulo
+            </button>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModal1Label" aria-hidden="true" >
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Por favor complete los siguientes campos</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                            <form id="form_datos"  enctype="multipart/form-data" onsubmit="return false;">                                
+                                {% csrf_token %}
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Codigo</span>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Ingrese codigo" aria-describedby="basic-addon1" id="codigo" name="Codigo" required=""/>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Artículo</span>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Ingrese el nombre del articulo" aria-describedby="basic-addon1" id="articulo" name="Articulo" required=""/>
+                                </div>
+                               
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Marca</span>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Ingrese la marca" aria-describedby="basic-addon1" id="marca" name="Marca" required=""/>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Categoria</span>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Insertar categoria" aria-describedby="basic-addon1" id="categoria" name="Categoria" required=""/>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Precio de compra</span>
+                                    </div>
+                                    <input type="number" class="form-control" placeholder="Ingresar el valor de compra" aria-describedby="basic-addon1" id="costo" name="Costo" onchange="calcular_valor('new')" onkeyup="calcular_valor('new')" required=""/>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Ganancia</span>
+                                    </div>
+                                    <input type="number" class="form-control" placeholder="Ingresar la ganancia que se quiere aplicar" aria-describedby="basic-addon1" id="ganancia" name="Ganancia" onchange="calcular_valor('new')" onkeyup="calcular_valor('new')" required=""/>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Impuesto</span>
+                                    </div>
+                                    <input type="number" class="form-control" placeholder="Ingrese la marca" aria-describedby="basic-addon1" id="impuesto" name="Impuesto" onchange="calcular_valor('new')" onkeyup="calcular_valor('new')" value="19" required=""/>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Valor unitario</span>
+                                    </div>
+                                    <input type="number" class="form-control" aria-describedby="basic-addon1" id="valor_unitario" name="Valor_unitario" disabled/>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <label class="input-group-text">Proveedor</label>
+                                    </div>
+                                    <select class="custom-select" id="proveedor" name="Proveedor" class="form-control" required="">
+                                      
+                                      {% for proveedor in proveedores %}
+                                        <option value="{{ proveedor.id }}">{{ proveedor.nombre }}  {{ proveedor.apellido }}</option>
+                                      {% endfor %}
+
+                                    </select>
+                                  </div>
+
+                                <div>
+                                    <label>Imagen a subir</label>
+                                    <input id="imagen" name="Imagen" type="file" class="btn btn-info">
+                                </div>
+                                <p></p>
+                                
+                                <div class="modal-footer">
+                                    <button type="submit" id="btn_new" class="btn btn-success" onclick="guardar()">Guardar</button>
+                                    <button type="button" class="btn btn-danger"  data-dismiss="modal" onclick="cancelar(this)"> Cancelar</button>
+                                </div>
+                            </form>     
+                    </div>
+                </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-danger" onclick="borrar()"><i class="fas fa-trash-alt"></i> Borrar </button>
+            <button type="button" class="btn btn-success"><i class="fas fa-barcode"></i> Generar codigo de Barras</button>
+            <button type="button" class="btn btn-success">Mas opciones</button>
+            <p></p>
+
+            <div class="table-responsive">
+                <table id ="Tabla_datos" class="table table-striped table-bordered">
+                    <thead class="thead"style="background:#009D36;">
+                        <tr style="color: #ffffff;">
+                            <th><input type="checkbox" id="selectall"/> Todo</th>
+                            <th>Código</th>
+                            <th>Artículo</th>
+                            <th>Marca</th>
+                            <th>Categoría</th>
+                            <th>% Impuesto</th>
+                            <th>Precio de venta</th>
+                            <th>Proveedor</th>
+                            <th hidden>costo</th>
+                            <th hidden>imagen_url</th>
+                            <th>Operaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for articulo in articulos%}
+                        <tr>
+                            <td><input type="checkbox" class="case" value="{{ articulo.id }}"/></td>
+                            <td>{{ articulo.codigo}}</td>
+                            <td>{{ articulo.nombre}}</td>
+                            <td>{{ articulo.marca}}</td>
+                            <td>{{ articulo.categoria}}</td>
+                            <td>{{ articulo.porcentaje}}</td>
+                            <td>{{ articulo.valor_unitario|stringformat:".2f" }} </td>
+                            <td>{{ articulo.proveedor.nombre}} {{ articulo.proveedor.apellido}}</td>
+                            <td hidden>{{ articulo.costo|stringformat:".2f" }}</td>
+                            <td hidden>{{ articulo.imagen_url}}</td>
+                            <td>
+                                <a onclick="editar(this)" data-toggle="modal" data-target="#exampleModal">
+                                    <i class="far fa-edit" style="color: #433BFF;"></i>
+                                </a>
+                                <a data-toggle="modal" data-target="#exampleModal11" onclick="mostrar_imagen('{{ articulo.imagen_url}}')">
+                                    <i class="fas fa-image" style="color: #433BFF;"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tr>
+                    </tbody>          
+                </table>
+            </div>
+
+            <div class="modal fade" id="exampleModal11" tabindex="-1" role="dialog" aria-labelledby="exampleModal11Label" aria-hidden="true" >
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Imagen del articulo</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                             <img id="imagen_articulo" class="img-thumbnail mx-auto d-block">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modificar las propiedades del articulo</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="form_editar" hidden enctype="multipart/form-data" onsubmit="return false;">
+                                {% csrf_token %}
+                                <input id="id_form" name="Id_form" hidden>
+                                <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text" id="basic-addon1">Codigo</span>
+                                        </div>
+                                        <input type="text" class="form-control" aria-describedby="basic-addon1" id="codigo_edit" name="Codigo" required="" disabled/>
+                                </div>
+                                <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text" id="basic-addon1">Artículo</span>
+                                        </div>
+                                        <input type="text" class="form-control" aria-describedby="basic-addon1" id="articulo_edit" name="Articulo" required=""/>
+                                </div>
+                                <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text" id="basic-addon1">Marca</span>
+                                        </div>
+                                        <input type="text" class="form-control" aria-describedby="basic-addon1" id="marca_edit" name="Marca" required=""/>
+                                </div>
+                                <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text" id="basic-addon1">Categoria</span>
+                                        </div>
+                                        <input type="text" class="form-control" aria-describedby="basic-addon1" id="categoria_edit" name="Categoria" required=""/>
+                                </div>
+                                <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text" id="basic-addon1">Costo</span>
+                                        </div>
+                                        <input type="number" class="form-control" aria-describedby="basic-addon1" id="costo_edit" name="Costo" onchange="calcular_valor('edit')" onkeyup="calcular_valor('edit')" required=""/>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="basic-addon1">Ganancia</span>
+                                    </div>
+                                    <input type="number" class="form-control" placeholder="Ingresar la ganancia que se quiere aplicar" aria-describedby="basic-addon1" id="ganancia_edit" name="Ganancia" onchange="calcular_valor('edit')" onkeyup="calcular_valor('edit')" required=""/>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">Impuesto</span>
+                                    </div>
+                                    <input type="number" class="form-control" aria-describedby="basic-addon1" id="impuesto_edit" name="Impuesto" onchange="calcular_valor('edit')" onkeyup="calcular_valor('edit')" value="19" required=""/>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">Valor unitario</span>
+                                    </div>
+                                    <input type="number" class="form-control" aria-describedby="basic-addon1" id="valor_unitario_edit" name="Valor_unitario" disabled/>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <label class="input-group-text">Proveedor</label>
+                                    </div>
+                                    <select class="custom-select" id="proveedor_edit" name="Proveedor" class="form-control" required="">
+                                      {% for proveedor in proveedores %}
+                                        <option value="{{ proveedor.id }}">{{ proveedor.nombre }}  {{ proveedor.apellido }}</option>
+                                      {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="card">
+                                    <div class="card-body">
+                                      <h5 class="card-title">Imagen actual</h5>
+                                    </div>
+                                    <img class="img-thumbnail mx-auto d-block" id="imagen_show" src="" alt="Card image cap">
+                                    <div class="card-body">
+                                            <label>Cambiar imagen</label>
+                                            <input id="imagen_edit" name="Imagen" type="file" class="btn btn-info">
+                                     </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" id="btn_edit" class="btn btn-success" onclick="guardar_edit()">Guardar</button>
+                                    <button type="button" class="btn btn-danger"  onclick="cancelar(this)" data-dismiss="modal"> Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+          </div>
+        </div>
+    </div>
+    {% include '_footer.html' %}
+</body>
+
+<script>
+    $("#selectall").on("click", function() {
+      $(".case").prop("checked", this.checked);
+    });
+
+    $(".case").on("click", function() {
+      if ($(".case").length == $(".case:checked").length) {
+        $("#selectall").prop("checked", true);
+      } else {
+        $("#selectall").prop("checked", false);
+      }
+    });
+
+    function mostrar_imagen(src){
+        if(src == ""){
+            $('#imagen_articulo')[0].src = "static/imagenes/no_disponible.png";
+        }
+        else{
+            $('#imagen_articulo')[0].src = src;
+        }
+    }
+
+    function cancelar(e){
+        var form_element = (e.parentElement).parentElement;
+        form_element.reset()
+        form_element.hidden = "true";
+    }
+
+    function show_nuevo(){
+        if($('#form_datos')[0].hasAttribute('hidden'))        {
+                $('#form_datos')[0].removeAttribute("hidden");
+            }
+    }
+
+    function calcular_valor(tipo){
+        if(tipo == "new"){
+            var iva = ($('#impuesto')[0].value/100)+1;
+            var costo = $('#costo')[0].value;
+            var ganancia = $('#ganancia')[0].value;
+            costo = parseFloat(costo) + parseFloat(ganancia);
+            $('#valor_unitario')[0].value = parseFloat(costo*iva).toFixed(2);
+            if(isNaN(iva) || isNaN(costo) || isNaN(ganancia)){
+                $("#btn_new").attr("disabled", true);
+            }
+            else{
+                $("#btn_new").attr("disabled", false);
+            }
+        }
+        else if(tipo == "edit"){
+            var iva = ($('#impuesto_edit')[0].value/100)+1;
+            var costo = $('#costo_edit')[0].value;
+            var ganancia = $('#ganancia_edit')[0].value;
+            costo = parseFloat(costo) + parseFloat(ganancia);
+            $('#valor_unitario_edit')[0].value = parseFloat(costo*iva).toFixed(2);
+            if(isNaN(iva) || isNaN(costo) || isNaN(ganancia)){
+                $("#btn_edit").attr("disabled", true);
+            }
+            else{
+                $("#btn_edit").attr("disabled", false);
+            }
+        }
+    }
+
+    function guardar(){
+        if($('#form_datos')[0].checkValidity()){
+            var form = $('#form_datos')[0];
+            var fd = new FormData(form);
+            fd.append('Valor_unitario',$('#valor_unitario')[0].value);
+            $.ajax({
+               type: "POST",
+               url: "articulos/nuevo",
+               data: fd,
+               processData: false,  // tell jQuery not to process the data
+               contentType: false,   // tell jQuery not to set contentType
+               success: function(data) {
+                    if(data.success == "true"){
+                        document.getElementById("form_datos").reset();
+                        $('#form_datos')[0].setAttribute("hidden","true");
+                        $('#exampleModal1')[0].setAttribute("hidden","true");
+                        window.location.reload(true);
+                    }
+                    alert(data.result);
+               },
+               failure: function(data){
+                    console.log(data);
+               }
+            });
+        }
+    }
+
+    function editar(e){
+        $('#form_editar')[0].removeAttribute("hidden");
+        var elements = (e.parentElement).parentElement;
+
+        $('#id_form')[0].value = elements.children[0].children[0].value;
+        $('#codigo_edit')[0].value = elements.children[1].textContent;
+        $('#articulo_edit')[0].value = elements.children[2].textContent;
+        $('#marca_edit')[0].value = elements.children[3].textContent;
+        $('#categoria_edit')[0].value = elements.children[4].textContent;
+        $('#impuesto_edit')[0].value = parseFloat(elements.children[5].textContent);
+        $('#valor_unitario_edit')[0].value = parseFloat(elements.children[6].textContent).toFixed(2);
+        $('#costo_edit')[0].value = parseFloat(elements.children[8].textContent).toFixed(2);
+        if(elements.children[9].textContent == "" ){
+            $('#imagen_show')[0].src = "static/imagenes/no_disponible.png";
+        }
+        else{
+            $('#imagen_show')[0].src = elements.children[9].textContent;
+        }
+
+        var iva = ($('#impuesto_edit')[0].value/100)+1;
+        var costo = $('#costo_edit')[0].value;
+
+        var total = parseFloat($('#valor_unitario_edit')[0].value)/iva;
+        var ganancia = total - parseFloat($('#costo_edit')[0].value);
+        $('#ganancia_edit')[0].value = ganancia.toFixed(2);
+       }
+
+    function guardar_edit(){
+        if($('#form_editar')[0].checkValidity()){
+            var form = $('#form_editar')[0];
+            var fd = new FormData(form);
+            fd.append('Codigo',$('#codigo_edit')[0].value);
+            fd.append('Valor_unitario',$('#valor_unitario_edit')[0].value);
+            $.ajax({
+               type: "POST",
+               url: "articulos/editar",
+               data: fd,
+               processData: false,
+               contentType: false,
+               success: function(data) {
+                    alert(data.result);
+                    if(data.success == "true"){
+                        document.getElementById("form_editar").reset();
+                        $('#form_editar')[0].setAttribute("hidden","true");
+                        $('#exampleModal')[0].setAttribute("hidden","true");
+                        window.location.reload(true);
+                    }
+               },
+               failure: function(data){
+                    console.log(data);
+               }
+            });
+        }
+    }
+
+    function borrar(){
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        for (var checkbox of checkboxes) {
+            var fd = new FormData();
+            fd.append('ID', checkbox.value);
+            $.ajax({
+               type: "POST",
+               url: "articulos/borrar",
+               data: fd,
+               processData: false,
+               contentType: false,
+               success: function(data) {
+                    alert(data.result);
+                    if(data.success == "true"){
+                        document.getElementById("form_editar").reset();
+                        $('#form_editar')[0].setAttribute("hidden","true");
+                        window.location.reload(true);
+                    }
+               },
+               failure: function(data){
+                    console.log(data);
+               }
+            });
+        }
+    }
+</script>
+</html>

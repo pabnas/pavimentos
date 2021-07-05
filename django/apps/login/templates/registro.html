@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+{% load static %}
+{% include '_head.html' %}
+<title>Registro</title>
+<script>
+    $("#label_username").hide();
+</script>
+
+<body>
+    <div id="wrapper">
+        {% include '_sidebar.html' %}
+        <div id="content-wrapper" class="d-flex flex-column">
+          <div id="content">
+            {% include '_topbar.html' %}
+            <div class="bg-light">
+    <article class="card-body mx-auto" style="max-width: 400px;">
+        <h4 class="card-title mt-3 text-center">Formulario de registro</h4>
+
+        <p class="divider-text">
+        </p>
+
+        <form id="form" onsubmit="return false;">
+            {% csrf_token %}
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                 </div>
+                <input id="nombre" class="form-control" placeholder="Nombre" type="text" required="">
+
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                </div>
+                <input id="apellido" class="form-control" placeholder="Apellido" type="text">
+            </div>
+
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                 </div>
+                <select id="tipo" class="form-control" required="">
+                    <option value="CC">CC</option>
+                    <option value="Pasaporte">Pasaporte</option>
+                    <option value="NIT">NIT</option>
+                </select>
+
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fas fa-id-card"></i> </span>
+                </div>
+                <input id="documento" class="form-control" placeholder="Documento" type="text">
+            </div>
+
+            <div class="form-group input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"> <i class="fas fa-phone-alt"></i> </span>
+              </div>
+              <input id="telefono" class="form-control" placeholder="Telefono" type="number" required="">
+            </div>
+
+            <div class="form-group input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"> <i class="fas fa-at"></i> </span>
+              </div>
+              <input id="correo" class="form-control" placeholder="Correo electronico" type="email" required="">
+            </div>
+
+            <div class="form-group input-group">
+              <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                  </div>
+                <input id="password" class="form-control" placeholder="Crear contraseña" type="password" required="">
+            </div>
+
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                  </div>
+                <input id="password_repeat" class="form-control" placeholder="Repetir contraseña" type="password" required="">
+            </div>
+
+            <div class="form-group input-group">
+                <input id="accept_agbs" name="accept_agbs" type="checkbox" value="0" required=""/>
+                <label>Acepto los terminos y condiciones</label>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block" onclick="validar()"> Crear Cuenta</button>
+            </div>
+        </form>
+    </article>
+</div>
+          </div>
+        </div>
+    </div>
+    {% include '_footer.html' %}
+</body>
+
+
+<script>
+    function validar()
+    {
+        if($('#form')[0].checkValidity()){
+            var nombre = $('#nombre').val();
+            var apellido = $('#apellido').val();
+            var tipo = $('#tipo').val();
+            var numero_doc = $('#documento').val();
+            var correo = $('#correo').val();
+            var telefono = $('#telefono').val();
+            var pass1 = $('#password').val();
+            var pass2 = $('#password_repeat').val();
+
+            if(pass1 != pass2){
+                alert('Las claves no coinciden');
+            }
+            else{
+                $.ajax({
+                   type: "POST",
+                   url: "registro/validar",
+                   data: {
+                        "nombre": nombre,
+                        "apellido": apellido,
+                        "tipo" : tipo,
+                        "numero_doc" : numero_doc,
+                        "correo" : correo,
+                        "telefono" : telefono,
+                        "password": pass1,
+                   },
+                   success: function(data) {
+                        alert(data.result);
+                        if(data.url != "" && data.url != undefined){
+                            window.location = data.url;
+                        }
+                   }
+                });
+            }
+        }
+    }
+</script>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+
+    {% include '_head.html' %}
+    <head>
+        <meta charset="UTF-8">
+    <title>Informes</title>
+    </head>
+<body>
+    <div id="wrapper">
+        {% include '_sidebar.html' %}
+        <div style="overflow: auto;" id="content-wrapper" class="d-flex flex-column">
+          <div id="content">
+            {% include '_topbar.html' %}
+            <div>
+
+                <label>Fecha:</label>
+                <input type="date">
+                <br>
+
+                <label>Contratista:</label>
+                <input type="text">
+                <br>
+
+                <label>Ubicacion:</label>
+                <input type="text">
+                <br>
+
+                <label>Objeto de contrato de obra:</label>
+                <input type="text">
+                <br>
+
+                <label>Contrato de obra:</label>
+                <input type="text">
+                <br>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>No. recibo</th>
+                            <th>Remision Proveedor</th>
+                            <th>Conductor</th>
+                            <th>Proveedor transporte</th>
+                            <th>Placa</th>
+                            <th>Origen proveedor</th>
+                            <th>Destino</th>
+                            <th>Obra</th>
+                            <th>Material</th>
+                            <th>Unidad</th>
+                            <th>Cantidad</th>
+                            <th>Calidad</th>
+                            <th>Cantidad per dia</th>
+                            <th>Tiempo entrega</th>
+                            <th>Contrato</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="date"></td>
+                            <td><input type="number"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><button type="button" onclick="agregar_elemento(this)">Agregar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <script>
+                    function agregar_elemento(e){
+                        debugger
+                        var table = e.parentElement.parentElement.parentElement.parentElement;
+                        var row_target = e.parentElement.parentElement;
+                        var body = e.parentElement.parentElement.parentElement;
+                        body.appendChild(row_target.cloneNode(true));
+                    }
+                </script>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% include '_footer.html' %}
+</body>
+</html>
