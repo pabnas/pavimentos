@@ -14,67 +14,99 @@
           <div id="content">
             {% include '_topbar.html' %}
             <div>
-                <label>Fecha:</label>
-                <input type="date">
-                <br>
-
-                <label>Numero orden:</label>
-                <input type="number">
-                <br>
-
-                <label>Solicitado por:</label>
-                <input type="text">
-                <br>
-
-                <label>Elaborado por:</label>
-                <input type="text">
-                <br>
-
-                <label>Autoriza:</label>
-                <input type="text">
-                <br>
-
-                <label>Obra destino:</label>
-                <input type="text">
-                <br>
-
-                <table>
+                <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Cantidad</th>
-                            <th>Unidad de medida</th>
-                            <th>Descripcion</th>
-                            <th>Cantidad Comprada</th>
-                            <th>Cantidad Pendiente</th>
+                            <th rowspan="2"><img src="/static/pavimentos.png"
+                                                 style="width: 30%;  height: auto;"></th>
+                            <th>REQUISICIÓN DE MATERIALES</th>
+                            <th>Version</th>
+                            <th>04</th>
+                        </tr>
+                        <tr>
+                            <th><label>GCM-PR-01-F-01</label></th>
+                            <th>Fecha de aprobación</th>
+                            <th>Abril 02 de 2020</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="number"></td>
+                            <td><label>Numero orden:</label></td>
+                            <td><label>
+                                <input type="number">
+                            </label></td>
+                            <td><label>Compra Critica</label></td>
+                            <td>
+                                <select class="combo">
+                                <option value="Si">Si</option>
+                                <option value="No">No</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label>Fecha de solicitud:</label></td>
+                            <td><input type="date"></td>
+                            <td><label>Proyecto</label></td>
                             <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <td><label>Solicitado por:</label></td>
                             <td><input type="text"></td>
-                            <td><input type="number"></td>
-                            <td><input type="number"></td>
-                            <td><button type="button" onclick="agregar_elemento(this)">Agregar</button></td>
-                            <td><button type="button" onclick="eliminar_elemento(this)">Eliminar</button></td>
+                            <td><label>Obra destino:</label></td>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <td><label>Elaborado por:</label></td>
+                            <td><input type="text"></td>
+                            <td><label>Autoriza:</label></td>
+                            <td><input type="text"></td>
                         </tr>
                     </tbody>
                 </table>
-                <script>
-                    function agregar_elemento(e){
-                        debugger
-                        var table = e.parentElement.parentElement.parentElement.parentElement;
-                        var row_target = e.parentElement.parentElement;
-                        var body = e.parentElement.parentElement.parentElement;
-                        body.appendChild(row_target.cloneNode(true));
-                    }
+                <br>
+                <br>
+            </div>
 
-                    function eliminar_elemento(e){
-                        debugger
-                        var seccion = e.parentElement.parentElement;
-                        seccion.remove();
-                    }
-                </script>
+            <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Cantidad</th>
+                        <th>Unidad de medida</th>
+                        <th>Descripcion</th>
+                        <th>Cantidad Comprada</th>
+                        <th>Cantidad Pendiente</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="number"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="number"></td>
+                        <td><input type="number"></td>
+                        <td><button type="button" onclick="agregar_elemento(this)">Agregar</button></td>
+                        <td><button type="button" onclick="eliminar_elemento(this)">Eliminar</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <script>
+                function agregar_elemento(e){
+                    debugger
+                    var table = e.parentElement.parentElement.parentElement.parentElement;
+                    var row_target = e.parentElement.parentElement;
+                    var body = e.parentElement.parentElement.parentElement;
+                    body.appendChild(row_target.cloneNode(true));
+                }
+
+                function eliminar_elemento(e){
+                    debugger
+                    var seccion = e.parentElement.parentElement;
+                    seccion.remove();
+                }
+            </script>
+
+                <button class="btn-success">Enviar</button>
             </div>
           </div>
         </div>
