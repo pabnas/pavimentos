@@ -18,13 +18,13 @@
                     <thead>
                         <tr>
                             <th rowspan="2"><img src="/static/pavimentos.png"
-                                                 style="width: 30%;  height: auto;"></th>
-                            <th>REQUISICIÓN DE MATERIALES</th>
+                                                 style="width: 70%;  height: auto;"></th>
+                            <th colspan="25%">REQUISICIÓN DE MATERIALES</th>
                             <th>Version</th>
                             <th>04</th>
                         </tr>
                         <tr>
-                            <th><label>GCM-PR-01-F-01</label></th>
+                            <th colspan="25%"><label>GCM-PR-01-F-01</label></th>
                             <th>Fecha de aprobación</th>
                             <th>Abril 02 de 2020</th>
                         </tr>
@@ -68,7 +68,7 @@
             </div>
 
             <div>
-            <table class="table">
+            <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>Cantidad</th>
@@ -76,6 +76,7 @@
                         <th>Descripcion</th>
                         <th>Cantidad Comprada</th>
                         <th>Cantidad Pendiente</th>
+                        <th>Operaciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -85,8 +86,10 @@
                         <td><input type="text"></td>
                         <td><input type="number"></td>
                         <td><input type="number"></td>
-                        <td><button type="button" onclick="agregar_elemento(this)">Agregar</button></td>
-                        <td><button type="button" onclick="eliminar_elemento(this)">Eliminar</button></td>
+                        <td>
+                            <button type="button" onclick="agregar_elemento(this)">Agregar</button>
+                            <button type="button" onclick="eliminar_elemento(this)">Eliminar</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -107,6 +110,7 @@
             </script>
 
                 <button class="btn-success">Enviar</button>
+                <button class="btn-success">Generar PDF</button>
             </div>
           </div>
         </div>

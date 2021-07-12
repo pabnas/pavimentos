@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     {% load static %}
-
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
     {% include '_head.html' %}
     <head>
         <meta charset="UTF-8">
@@ -14,48 +14,49 @@
           <div id="content">
             {% include '_topbar.html' %}
             <div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th rowspan="2"><img src="/static/pavimentos.png"
+                                                 style="width: 100%;  height: auto;"></th>
+                            <th colspan="25%">ORDEN DE COMPRA / SERVICIO</th>
+                            <th>Version</th>
+                            <th>04</th>
+                        </tr>
+                        <tr>
+                            <th colspan="25%"><label>GCM-PR-01-F-02</label></th>
+                            <th>Fecha de aprobación</th>
+                            <th>Septiembre 19 de 2020</th>
+                        </tr>
+                        <tr>
+                            <th colspan="100%"><label>Diseño Y Construcción de Obras Civiles, Alquiler y Transporte de Maquinaria.</label></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><label>Orden de compra:</label></td>
+                            <td colspan="3"><input type="number"></td>
+                            <td><label>Fecha</label></td>
+                            <td><input type="date"></td>
+                        </tr>
+                        <tr>
+                            <td><label>Nombre proveedor</label></td>
+                            <td colspan="3"><input type="text"></td>
+                            <td><label>NIT</label></td>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <td><label>DIRECCIÓN PROVEEDOR:</label></td>
+                            <td><input type="text"></td>
+                            <td><label>TELÉFONO PROVEDOR:</label></td>
+                            <td><input type="text"></td>
+                            <td><label>Ciudad:</label></td>
+                            <td><input type="text"></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                <label>Fecha:</label>
-                <input type="date">
-                <br>
-
-                <label>Numero orden:</label>
-                <input type="number">
-                <br>
-
-                <label>Solicitado por:</label>
-                <input type="text">
-                <br>
-
-                <label>Elaborado por:</label>
-                <input type="text">
-                <br>
-
-                <label>Autoriza:</label>
-                <input type="text">
-                <br>
-
-                <label>Obra destino:</label>
-                <input type="text">
-                <br>
-
-                <label>Nombre Proveedor:</label>
-                <input type="text">
-                <label>NIT:</label>
-                <input type="text">
-                <br>
-
-                <label>Direccion Proveedor:</label>
-                <input type="text">
-                <br>
-
-                <label>Telefono Proveedor:</label>
-                <input type="number">
-                <label>Ciudad:</label>
-                <input type="Text">
-                <br>
-
-                <table>
+                <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Cantidad</th>
@@ -63,6 +64,7 @@
                             <th>Unidad</th>
                             <th>Valor unitario</th>
                             <th>Valor total</th>
+                            <th>Operaciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,9 +74,74 @@
                             <td><input type="number"></td>
                             <td><input type="number"></td>
                             <td><input type="number"></td>
-                            <td><button type="button" onclick="agregar_elemento(this)">Agregar</button></td>
+                            <td>
+                                <button type="button" onclick="agregar_elemento(this)">Agregar</button>
+                                <button type="button" onclick="eliminar_elemento(this)">Eliminar</button>
+                            </td>
                         </tr>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td rowspan="2"><label>Nota</label></td>
+                            <td rowspan="2" colspan="3"><textarea></textarea></td>
+                            <td><label>Subtotal</label></td>
+                            <td><input type="number"></td>
+                        </tr>
+                        <tr>
+                            <td><label>Iva</label></td>
+                            <td><input type="number"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"><label>CONDICIONES COMERCIALES</label></td>
+                            <td><label>Total</label></td>
+                            <td><input type="number"></td>
+                        </tr>
+                        <tr>
+                            <td><label>OBRA O PROYECTO:</label></td>
+                            <td colspan="3"><input type="text"></td>
+                            <td><label>Retencion Fuente</label></td>
+                            <td><input type="number"></td>
+                        </tr>
+                        <tr>
+                            <td><label>LUGAR DE ENTREGA:</label></td>
+                            <td colspan="3"><input type="text"></td>
+                            <td ROWSPAN="2"><label>Otras retenciones:</label></td>
+                            <td><input type="number"></td>
+                        </tr>
+                        <tr>
+                            <td><label>FORMA DE PAGO:</label></td>
+                            <td colspan="3"><input type="text"></td>
+                            <td><input type="number"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"> </td>
+                            <td><label>Total</label></td>
+                            <td><input type="number"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                            SOLICITAMOS FACTURAR A:<br>
+                            Pavimentos Técnicos & Compañía Ltda. NIT. 800.185.572-7 Bogotá <br>
+                            TEL.  2520384 - 4303831 Correo: compras@pavitecnicos.com <br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><canvas id="firma1" width="100" height="73"></canvas></td>
+                            <td colspan="3"><canvas id="firma2" width="100" height="73"></canvas></td>
+                        </tr>
+                        <tr>
+                           <td colspan="2"><label>Nombre y firma Analista de Compras y Maquinaria </label></td>
+                           <td colspan="3"><label>Nombre y Firma Proveedor</label></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><canvas id="firma3" width="100" height="73"></canvas></td>
+                            <td colspan="3"><canvas id="firma4" width="100" height="73"></canvas></td>
+                        </tr>
+                        <tr>
+                           <td colspan="2"><label>Nombre y Firma de Quién Envía la Requisición </label></td>
+                           <td colspan="3"><label>Nombre y Firma de Quién Aprueba</label></td>
+                        </tr>
+                    </tfoot>
                 </table>
                 <script>
                     function agregar_elemento(e){
@@ -84,8 +151,14 @@
                         var body = e.parentElement.parentElement.parentElement;
                         body.appendChild(row_target.cloneNode(true));
                     }
+                    function eliminar_elemento(e){
+                        debugger
+                        var seccion = e.parentElement.parentElement;
+                        seccion.remove();
+                    }
                 </script>
-
+                <button class="btn-success">Enviar</button>
+                <button class="btn-success">Generar PDF</button>
             </div>
           </div>
         </div>
