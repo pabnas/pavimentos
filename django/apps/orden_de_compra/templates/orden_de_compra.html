@@ -126,16 +126,16 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2"><canvas id="firma1" width="100" height="73"></canvas></td>
-                            <td colspan="3"><canvas id="firma2" width="100" height="73"></canvas></td>
+                            <td colspan="2"><canvas id="firma1" width="700" height="73"></canvas></td>
+                            <td colspan="3"><canvas id="firma2" width="700" height="73"></canvas></td>
                         </tr>
                         <tr>
                            <td colspan="2"><label>Nombre y firma Analista de Compras y Maquinaria </label></td>
                            <td colspan="3"><label>Nombre y Firma Proveedor</label></td>
                         </tr>
                         <tr>
-                            <td colspan="2"><canvas id="firma3" width="100" height="73"></canvas></td>
-                            <td colspan="3"><canvas id="firma4" width="100" height="73"></canvas></td>
+                            <td colspan="2"><canvas id="firma3" width="700" height="73"></canvas></td>
+                            <td colspan="3"><canvas id="firma4" width="700" height="73"></canvas></td>
                         </tr>
                         <tr>
                            <td colspan="2"><label>Nombre y Firma de Quién Envía la Requisición </label></td>
@@ -156,6 +156,12 @@
                         var seccion = e.parentElement.parentElement;
                         seccion.remove();
                     }
+                </script>
+                <script>
+                    var signaturePad1 = new SignaturePad($("#firma1").get(0));
+                    var signaturePad2= new SignaturePad($("#firma2").get(0));
+                    var signaturePad3 = new SignaturePad($("#firma3").get(0));
+                    var signaturePad4 = new SignaturePad($("#firma4").get(0));
                 </script>
                 <button class="btn-success">Enviar</button>
                 <button class="btn-success">Generar PDF</button>

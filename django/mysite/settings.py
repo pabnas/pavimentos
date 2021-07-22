@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-#os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/pabnas/Descargas/pos.json"
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -141,12 +140,8 @@ STATICFILES_DIRS = [
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # MEDIA_URL = '/media/'
 
-#DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-GS_MEDIA_BUCKET_NAME = 'bucket_media_django'  # same as STATIC BUCKET if using single bucket both for static and media
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
-
 
 #Configuracion para envio de correo
 EMAIL_HOST = 'mail.smtp2go.com'
